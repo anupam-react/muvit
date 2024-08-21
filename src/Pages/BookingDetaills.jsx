@@ -1,53 +1,33 @@
-import { useRef, useState } from "react";
-import { Button } from "react-bootstrap";
+import { useEffect, useRef, useState } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useNavigate } from "react-router-dom";
-import HOC from "../Components/MainComponents/HOC";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { fetchApiData, getDateFromISOString } from "../utiils";
 
 const BookingDetaills = () => {
-  const [isBannerSection, setIsBannerSection] = useState(true);
-  const [street, setStreet] = useState("");
-  const [state, setState] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
-  const [pinCode, setPinCode] = useState("");
-  const [assignProfile, setAssignProfile] = useState("");
-  const [vehicleType, setVehicleType] = useState("");
-  const [title, setTitle] = useState("");
-  const [publishDate, setPublishDate] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [couponCode, setCouponCode] = useState("");
-  const [offer, setOffer] = useState("");
-  const [targetUser, setTargetUser] = useState("");
-  const [targetCrateria, setTargetCrateria] = useState("");
-  const [bannerImage, setBannerImage] = useState(null);
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [id, setId] = useState("");
-
-  const fileInputRef = useRef(null);
-  const [isNextPage, setIsNextPage] = useState(false);
+  const [bookingDetails, setBookingDetails] = useState([]);
   const navigate = useNavigate();
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setBannerImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+
+  const {id} = useParams()
+
+  
+  async function getBooking() {
+    const data = await fetchApiData(
+      `https://muvit-project.vercel.app/api/v1/admin/bookings/byId/${id}`
+    );
+    setBookingDetails(data?.data);
+  }
+  console.log(bookingDetails)
+
+  useEffect(()=>{
+    getBooking()
+  },[id])
+
+
   return (
     <>
       <div>
-        <div className="delivery_container_split_totals">
-          <div></div>
-          <div>
-            <Button style={{ visibility: "hidden" }}>+ Add Zone</Button>
-          </div>
-        </div>
+       
         <div className="mb-5 mt-2 dashboard_container_split_totals2">
           <span style={{ display: "flex", gap: ".5rem", fontSize: "2rem" }}>
             <span
@@ -68,35 +48,30 @@ const BookingDetaills = () => {
         <div className="promotion_container">
           <div>
             <div className="promotion_container_1">
-              <div>
+              <div style={{width:"10rem"}}>
                 <p>Date</p>
-                <p>2/11/12</p>
+                <p>{getDateFromISOString(bookingDetails?.createdAt)}</p>
               </div>
-              <div>
+              <div style={{width:"10rem"}}>
                 <p>Vehicle Type</p>
-                <p>Truck Box</p>
+                <p>{bookingDetails?.vechileType?.name}</p>
               </div>
-              <div>
+              <div style={{width:"10rem"}}>
                 <p>Order Status</p>
                 <p
-                  style={{
-                    padding: "8px, 16px, 8px, 16px",
-                    border: "1px solid gray",
-                    borderRadius: " 8px",
-                    textAlign: "center",
-                    backgroundColor: "#F8F8F8",
-                  }}
+                  className={bookingDetails?.status === "COMPLETED" ? "complete-booking" : "pending-booking"}
+                  style={{textAlign:"center"}}
                 >
-                  Pending
+                  {bookingDetails?.status}
                 </p>
               </div>
-              <div>
+              <div style={{width:"10rem"}}>
                 <p>Sr. no.</p>
                 <p>#101_100001</p>
               </div>
-              <div>
-                <p>Vehicle Type</p>
-                <p>Truck Box</p>
+              <div style={{width:"10rem"}}>
+                <p>Order ID</p>
+                <p>{bookingDetails?.bookingId}</p>
               </div>
             </div>
             <div className="promotion_container_2">
@@ -128,7 +103,7 @@ const BookingDetaills = () => {
                       }}
                     ></p>
                   </div>
-                  <div>365 South Inverness St.</div>
+                  <div>{bookingDetails?.pickupName}</div>
                 </div>
                 <div className="d-flex gap-3">
                   <p>
@@ -140,7 +115,7 @@ const BookingDetaills = () => {
                   </p>
                   <p style={{ display: "flex", flexDirection: "column" }}>
                     <span>Drop</span>
-                    <span>365 South Inverness St.</span>
+                    <span>{bookingDetails?.dropName}</span>
                   </p>
                 </div>
               </div>
@@ -158,11 +133,11 @@ const BookingDetaills = () => {
             <div className="promotion_container_3">
               <p>
                 <span>Total Amount</span>
-                <span>$ 2,000</span>
+                <span>${bookingDetails?.totalPrice}</span>
               </p>
               <p>
                 <span>Discount Offered</span>
-                <span>$ 2,000</span>
+                <span>$000</span>
               </p>
             </div>
           </div>

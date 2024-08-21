@@ -2,9 +2,51 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import HOC from "../Components/MainComponents/HOC";
 import { Form, ProgressBar, Table } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { fetchApiData } from "../utiils";
 
 const Dashboard = () => {
+  const [user, setUser] = useState([])
+  const [partner, setPartner] = useState([])
+  const [type, setType] = useState([])
+  const [zone, setZone] = useState([])
   const navigate = useNavigate();
+
+  async function getUsers() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/profile?userType=USER"
+    );
+    setUser(data?.data);
+  }
+
+    
+  async function getPartner() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/profile?userType=PARTNER"
+    );
+    setPartner(data?.data);
+  }
+
+  async function getType() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/VechileType"
+    );
+    setType(data?.data);
+  }
+  async function getZones() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/delivery-zones"
+    );
+    setZone(data?.data);
+  }
+
+  useEffect(()=>{
+    getUsers()
+    getPartner()
+    getType()
+    getZones()
+  },[])
+
   return (
     <div>
       <div className="dashboard_container nSans">
@@ -24,7 +66,7 @@ const Dashboard = () => {
                 >
                   <span>
                     <p>Delivery Zone</p>
-                    <p>40,689</p>
+                    <p>{zone?.length}</p>
                   </span>
                   <span>
                     <img
@@ -73,7 +115,7 @@ const Dashboard = () => {
                 <div className="dashboard_container_split_totals">
                   <span>
                     <p>Delivery Partners</p>
-                    <p>55,689</p>
+                    <p>{partner?.length}</p>
                   </span>
                   <span>
                     <img
@@ -94,7 +136,7 @@ const Dashboard = () => {
                       />
                     </span>{" "}
                     <span>
-                      <span style={{ color: "#00B69B" }}>26,00+ </span>New Zones
+                      <span style={{ color: "#00B69B" }}>26,00+ </span>New Partners
                     </span>
                   </p>
                 </div>
@@ -122,7 +164,7 @@ const Dashboard = () => {
                 <div className="dashboard_container_split_totals">
                   <span>
                     <p>Vehicle Type</p>
-                    <p>4</p>
+                    <p>{type?.length}</p>
                   </span>
                   <span>
                     <img
@@ -143,7 +185,7 @@ const Dashboard = () => {
                       />
                     </span>{" "}
                     <span>
-                      <span style={{ color: "#00B69B" }}>26,00+ </span>New Zones
+                      <span style={{ color: "#00B69B" }}>26,00+ </span> New Vehicles
                     </span>
                   </p>
                 </div>
@@ -171,7 +213,7 @@ const Dashboard = () => {
                 <div className="dashboard_container_split_totals">
                   <span>
                     <p>Total Users</p>
-                    <p>40,689</p>
+                    <p>{user?.length}</p>
                   </span>
                   <span>
                     <img
@@ -192,7 +234,7 @@ const Dashboard = () => {
                       />
                     </span>{" "}
                     <span>
-                      <span style={{ color: "#00B69B" }}>26,00+ </span>New Zones
+                      <span style={{ color: "#00B69B" }}>26,00+ </span>New Users
                     </span>
                   </p>
                 </div>

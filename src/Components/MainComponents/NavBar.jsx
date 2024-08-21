@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 const NavBar = ({data}) => {
   const location = useLocation();
   const pathname = location.pathname;
+  console.log(pathname)
   const navigate = useNavigate();
   const NavBarItems = [
     {
@@ -21,6 +22,7 @@ const NavBar = ({data}) => {
       name: "Booking",
       path: "/booking",
     },
+  
     {
       name: "Dashboard",
       path: "/dashboard/delivery-zone",
@@ -63,14 +65,15 @@ const NavBar = ({data}) => {
     },
   ];
 
-  const currentItem = NavBarItems.find((item) => item.path === pathname);
+  const currentItem = NavBarItems.find((item) => item.path === pathname || item.path === `/${pathname.split('/')[1]}`);
+ 
   return (
     <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
       <Container>
         <Navbar.Brand href="#home">
           <p className="navbar-items">
             <span>{currentItem?.name}</span>
-            <span>Get summary of your key metrices here.</span>
+            <span>{currentItem?.name === "Booking" ? "Manage you bookings from here" : "Get summary of your key metrices here."}</span>
           </p>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />

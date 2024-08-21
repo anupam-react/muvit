@@ -1,12 +1,24 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button, Form, Table } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HOC from "../../Components/MainComponents/HOC";
 import { useNavigate } from "react-router-dom";
+import { fetchApiData, getDateFromISOString } from "../../utiils";
 
 const DeliveryZone = () => {
   const [isAssigned, setIsAssigned] = useState(true);
+  const [zone, setZone] = useState([])
   const navigate = useNavigate();
+  async function getZones() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/delivery-zones"
+    );
+    setZone(data?.data);
+  }
+
+  useEffect(()=>{
+    getZones()
+  },[])
   return (
     <div>
       {" "}
@@ -148,16 +160,19 @@ const DeliveryZone = () => {
               </tr>
             </thead>
             <tbody>
-              <tr style={{ border: "none" }}>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>#101</td>
+              {zone?.map((item , i)=>(
+              <tr style={{ border: "none" }} key={i}>
+                <td style={{ border: "none" }}>{item?.Id}</td>
+                <td style={{ border: "none" }}>{item?.assignProfile}</td>
+                <td style={{ border: "none" }}>{item?.vechileType?.name}</td>
+                <td style={{ border: "none" }}>{item?.street + " , " + item?.city}</td>
+                <td style={{ border: "none" }}>{item?.pincode}</td>
+                <td style={{ border: "none" }}>{item?.state}</td>
+                <td style={{ border: "none" }}>{item?.country}</td>
+                <td style={{ border: "none" }}>{getDateFromISOString(item?.createdAt)}</td>
               </tr>
+
+              ))}
             </tbody>
           </Table>
         </div>

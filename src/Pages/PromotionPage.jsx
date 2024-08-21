@@ -2,18 +2,37 @@ import { useRef, useState } from "react";
 import HOC from "../Components/MainComponents/HOC";
 import { Button, Form } from "react-bootstrap";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { createApiData } from "../utiils";
+import { warnToast } from "../Components/Toast";
 
 const PromotionPage = () => {
   const [isBannerSection, setIsBannerSection] = useState(true);
-  const [title, setTitle] = useState("");
-  const [publishDate, setPublishDate] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [couponCode, setCouponCode] = useState("");
-  const [offer, setOffer] = useState("");
-  const [targetUser, setTargetUser] = useState("");
-  const [targetCrateria, setTargetCrateria] = useState("");
+  const [coupon , setCoupon] = useState({
+    title:"",
+    desc:"", 
+    publishDate:"",
+    expiryDate:"",
+    couponCode:"",
+    percentage:"",
+    targetUser:"",
+    targetCrateria:"",
+
+  })
+
   const [bannerImage, setBannerImage] = useState(null);
+
   const fileInputRef = useRef(null);
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCoupon((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+  };
+
+  console.log(coupon)
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
@@ -25,6 +44,40 @@ const PromotionPage = () => {
       reader.readAsDataURL(file);
     }
   };
+  const handleCouponSubmit = async(e)=>{
+    e.preventDefault()
+
+    if(!coupon?.title || !coupon?.desc || !coupon?.couponCode || !coupon?.percentage || !coupon?.expiryDate){
+        return  warnToast("Please Fill All The Fields")
+    }
+
+    const formData ={
+      title: coupon?.title,
+      desc: coupon?.desc,
+      code: coupon?.couponCode,
+      discount: coupon?.percentage,
+      isPercent: true,
+      expirationDate: coupon?.expiryDate,
+      isActive: true,
+      recipient: "ALL"
+    }
+    try {
+      const response = await createApiData("https://muvit-project.vercel.app/api/v1/admin/coupons", formData)
+      console.log(response)
+      setCoupon({
+        title:"",
+        desc:"", 
+        publishDate:"",
+        expiryDate:"",
+        couponCode:"",
+        percentage:"",
+        targetUser:"",
+        targetCrateria:"",})
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div>
       {" "}
@@ -113,54 +166,58 @@ const PromotionPage = () => {
               </div>
             </Form>
           ) : (
-            <Form className="promotion_container_form">
+            <Form className="promotion_container_form" onSubmit={handleCouponSubmit}>
               <Form.Group className="mb-3">
                 <Form.Label>Title</Form.Label>
-                <Form.Control type="text" placeholder="Enter Title" />
+                <Form.Control type="text" placeholder="Enter Title" name="title" value={coupon?.title} onChange={handleChange} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Description</Form.Label>
+                <Form.Control type="text" placeholder="Enter Description" name="desc" value={coupon?.desc} onChange={handleChange}/>
               </Form.Group>
 
               <div className="promotion_container_split_grid">
                 <Form.Group>
                   <Form.Label>Add Coupon Code</Form.Label>
-                  <Form.Control type="text" placeholder="Enter Coupon Code" />
+                  <Form.Control type="text" placeholder="Enter Coupon Code" name="couponCode" value={coupon?.couponCode} onChange={handleChange}/>
                 </Form.Group>
                 <Form.Group>
                   <Form.Label>Add Offer</Form.Label>
-                  <Form.Select defaultValue="Choose...">
+                  <Form.Select defaultValue="Choose..." name="percentage" value={coupon?.percentage} onChange={handleChange}>
                     <option>Select Offer</option>
-                    <option value="1">20%</option>
-                    <option value="2">50%</option>
-                    <option value="2">80%</option>
-                    <option value="2">Next Service Free</option>
-                    <option value="2">No Delivery Charges</option>
+                    <option value="20">20%</option>
+                    <option value="50">50%</option>
+                    <option value="80">80%</option>
+                    <option value="Next Service Free">Next Service Free</option>
+                    <option value="No Delivery Charges">No Delivery Charges</option>
                   </Form.Select>
                 </Form.Group>
                 <Form.Group>
                   <Form.Label>Target User</Form.Label>
-                  <Form.Select defaultValue="Choose...">
+                  <Form.Select defaultValue="Choose..." name="targetUser" value={coupon?.targetUser} onChange={handleChange}>
                     <option>Select User</option>
-                    <option value="1">New User</option>
-                    <option value="2">Old User</option>
-                    <option value="3">All User</option>
+                    <option value="NEW">New User</option>
+                    <option value="OLD">Old User</option>
+                    <option value="ALL">All User</option>
                   </Form.Select>
                 </Form.Group>
                 <Form.Group>
                   <Form.Label>Target Target Criteria</Form.Label>
-                  <Form.Select defaultValue="Choose...">
+                  <Form.Select defaultValue="Choose..." name="targetCrateria" value={coupon?.targetCrateria} onChange={handleChange}>
                     <option>Select Criteria</option>
-                    <option value="1">End of Season</option>
-                    <option value="2">Orders Above $1000</option>
-                    <option value="2">Orders Above $2000</option>
+                    <option value="End of Season">End of Season</option>
+                    <option value="Orders Above $1000">Orders Above $1000</option>
+                    <option value="Orders Above $2000">Orders Above $2000</option>
                   </Form.Select>
                 </Form.Group>
                 <Form.Group>
                   <Form.Label>Publish date</Form.Label>
-                  <Form.Control type="date" />
+                  <Form.Control type="date" name="publishDate" value={coupon?.publishDate} onChange={handleChange}/>
                 </Form.Group>
                 <Form.Group>
                   {" "}
                   <Form.Label>Publish End</Form.Label>
-                  <Form.Control type="date" />
+                  <Form.Control type="date" name="expiryDate" value={coupon?.expiryDate} onChange={handleChange}/>
                 </Form.Group>{" "}
               </div>
               <div className="bannerBtn">

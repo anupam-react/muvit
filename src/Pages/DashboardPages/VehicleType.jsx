@@ -1,12 +1,26 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button, Form, Table } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HOC from "../../Components/MainComponents/HOC";
 import { useNavigate } from "react-router-dom";
+import { fetchApiData } from "../../utiils";
 
 const VehicleType = () => {
   const [isAssigned, setIsAssigned] = useState(true);
+  const [allTypes, setAllTypes] = useState([]);
   const navigate = useNavigate();
+
+  async function getType() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/VechileType"
+    );
+    setAllTypes(data?.data);
+  }
+ console.log(allTypes)
+
+  useEffect(()=>{
+    getType()
+  },[])
 
   return (
     <div>
@@ -37,20 +51,7 @@ const VehicleType = () => {
             <span>Vehicle Type</span>
           </span>
           <span style={{ display: "flex", gap: "1rem" }}>
-            {/* <span>
-              <Button
-                style={{
-                  backgroundColor: isAssigned ? "#00B69B" : "#F1F4F9",
-                  color: isAssigned ? "white" : "#202224",
-                  border: "none",
-                }}
-                onClick={() => setIsAssigned(!isAssigned)}
-              >
-                {isAssigned
-                  ? "Assigned Bookings (2)"
-                  : "Un assigned Bookings (2)"}
-              </Button>
-            </span> */}
+     
             <span>
               <Form.Control
                 type="text"
@@ -132,21 +133,28 @@ const VehicleType = () => {
               </tr>
             </thead>
             <tbody>
+              {allTypes?.map((item , i)=>(
               <tr style={{ border: "none", padding: "1rem 0" }}>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>#101</td>
+                <td style={{ border: "none" }}>#{i+1}</td>
+                <td style={{ border: "none" }}>{item?.name}</td>
+                <td style={{ border: "none" }}>{item?.id}</td>
                 <td style={{ border: "none" }}>#101</td>
                 <td
-                  style={{
+                 style={{
+
+                  border: "none",
+         
+                }}
+                >
+                  <div  style={{
                     backgroundColor: "#00B69B",
                     color: "white",
-                    border: "none",
+                    padding:"10px 5px",
                     borderRadius: "9px",
-                    width: "10px",
-                  }}
-                >
+                  }}>
                   Done
+
+                  </div>
                 </td>
                 <td style={{ border: "none" }}>
                   <Icon
@@ -157,6 +165,8 @@ const VehicleType = () => {
                   />
                 </td>
               </tr>
+
+              ))}
             </tbody>
           </Table>
         </div>

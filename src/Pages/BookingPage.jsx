@@ -17,11 +17,12 @@ const BookingPage = () => {
     );
     setAllBooking(data?.data);
   }
-  console.log(allBooking)
+ 
 
   useEffect(()=>{
     getBooking()
   },[])
+
   return (
     <div>
       {" "}
@@ -70,7 +71,7 @@ const BookingPage = () => {
           </span>
         </div>
         <div></div>
-        <div className="mt-3">
+        <div className="mt-3" style={{height:"70vh" , overflowY:"scroll"}}>
           <Table style={{ textAlign: "center" }}>
             <thead>
               <tr style={{ border: "none" }}>
@@ -200,10 +201,10 @@ const BookingPage = () => {
             </thead>
             <tbody>
               {allBooking?.map((item , i)=>(
-              <tr style={{ border: "none" }}>
+              <tr key={i} onClick={() => navigate(`/booking/${item?._id}`)} style={{ border: "none" , cursor:"pointer" }}>
                 <td
-                  onClick={() => navigate("/booking/1")}
-                  style={{ border: "none", cursor: "pointer" , width:"60px" }}
+                  
+                  style={{ border: "none" , width:"60px" }}
                 >
                   #000_{i+1}
                 </td>
@@ -214,7 +215,7 @@ const BookingPage = () => {
                 <td style={{ border: "none", width:"60px" }}>{item?.dropName}</td>
                 <td style={{ border: "none", width:"60px" }}>Add-on</td>
                 <td style={{ border: "none", width:"60px" }}>Add-on</td>
-                <td >
+                <td style={{ border: "none" }}>
                   <div className={item?.status === "COMPLETED" ? "complete-booking" : "pending-booking"}>
                   {item?.status}
                   </div>

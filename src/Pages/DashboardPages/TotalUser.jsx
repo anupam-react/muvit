@@ -1,12 +1,26 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Form, Table } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HOC from "../../Components/MainComponents/HOC";
 import { useNavigate } from "react-router-dom";
+import { fetchApiData } from "../../utiils";
 
 const TotalUser = () => {
   const [isAssigned, setIsAssigned] = useState(true);
+  const [allUsers, setAllUsers] = useState([]);
   const navigate = useNavigate();
+
+  async function getUsers() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/profile?userType=USER"
+    );
+    setAllUsers(data?.data);
+  }
+ console.log(allUsers)
+
+  useEffect(()=>{
+    getUsers()
+  },[])
   return (
     <div>
       {" "}
@@ -58,7 +72,7 @@ const TotalUser = () => {
           </span>
         </div>
         <div></div>
-        <div className="mt-3">
+        <div className="mt-3" style={{height:"70vh" , overflowY:"scroll"}}>
           <Table style={{ textAlign: "center" }}>
             <thead>
               <tr style={{ border: "none" }}>
@@ -130,23 +144,22 @@ const TotalUser = () => {
                 </th>
               </tr>
             </thead>
-            <tbody>
-              <tr style={{ border: "none" }}>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>#101</td>
+            <tbody >
+              {allUsers?.map((item , i)=>(
+              <tr style={{ border: "none" }} key={i}>
+                <td style={{ border: "none" }}>{item?.user?.userId}</td>
+                <td style={{ border: "none" }}>{item?.user?.fullName}</td>
+                <td style={{ border: "none" }}>{item?.user?.email}</td>
+                <td style={{ border: "none" }}>{item?.user?.mobileNumber}</td>
+                <td style={{ border: "none" }}>{item?.memberSince}</td>
                 <td
-                  style={{
-                    backgroundColor: "#00B69B",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "9px",
-                    width: "10px",
-                  }}
+                   style={{ border: "none" }}   
                 >
-                  Active
+                  <div className={item?.user?.status ? "complete-booking" : "pending-booking"}
+                      style={{textAlign:"center" }}>
+                {item?.user?.status ? "Active" : "Inactive"} 
+
+                  </div>
                 </td>
                 <td style={{ border: "none" }}>
                   <Icon
@@ -157,6 +170,10 @@ const TotalUser = () => {
                   />
                 </td>
               </tr>
+
+              ))}
+          
+            
             </tbody>
           </Table>
         </div>

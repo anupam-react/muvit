@@ -1,186 +1,242 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button, Form, Table } from "react-bootstrap";
-import { useState } from "react";
-import HOC from "../../Components/MainComponents/HOC";
+import { useRef, useState } from "react";
+
 import { useNavigate } from "react-router-dom";
 
 const AddVehicleType = () => {
-  const [isAssigned, setIsAssigned] = useState(true);
-  
-  const [isPaid, setIsPaid] = useState(false);
+  const [vechicle , setVehicle] = useState({
+    name:"",
+    image:"",
+    id:"",
+    registrationImage:""
+  })
+  const [isNextPage, setIsNextPage] = useState(false);
+  const [bannerImage, setBannerImage] = useState(null);
+  const [bannerImage1, setBannerImage1] = useState(null);
+  const fileInputRef = useRef(null);
+  const fileInputRef1 = useRef(null);
   const navigate = useNavigate();
+ console.log(bannerImage)
+
+ const handleChange = (e) => {
+  const { name, value, type, files } = e.target;
+  
+  if (type === 'file') {
+    const file = files[0];
+    setFormData((prevData) => ({
+      ...prevData,
+      image: file,
+      imagePreview: URL.createObjectURL(file),
+    }));
+  } else {
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }
+};
+
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+  
+  // Handle form submission logic here
+};
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBannerImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  const handleImageUpload1 = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBannerImage1(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
   return (
     <div>
-      {" "}
-      <div className="dashboard_container_split2">
-        <div className="delivery_container_split_totals">
-          <div></div>
-          <div>{/* <Button>+ Add Zone</Button> */}</div>
-        </div>
-        <div className="dashboard_container_split_totals2">
-          <span style={{ display: "flex", gap: ".5rem", fontSize: "2rem" }}>
-            <span
-              onClick={() => navigate("/dashboard/vehicle-type")}
-              style={{ cursor: "pointer" }}
-            >
-              <Icon
-                icon="solar:alt-arrow-left-linear"
-                width="1.2rem"
-                height="2.2rem"
-                style={{ color: "#202224", fontWeight: "bold" }}
-              />
-            </span>
-            <span>Delivery Partners Payout's</span>
-          </span>
-          <span style={{ display: "flex", gap: "1rem" }}>
-            {/* <span>
-              <Button
-                style={{
-                  backgroundColor: isAssigned ? "#00B69B" : "#F1F4F9",
-                  color: isAssigned ? "white" : "#202224",
-                  border: "none",
-                }}
-                onClick={() => setIsAssigned(!isAssigned)}
+    {isNextPage ? (
+        <div>
+        
+          <div className="mb-5 mt-2 dashboard_container_split_totals2 ">
+            <span style={{ display: "flex", gap: ".5rem", fontSize: "2rem" }}>
+              <span
+                onClick={() => setIsNextPage(false)}
+                style={{ cursor: "pointer" }}
               >
-                {isAssigned
-                  ? "Assigned Bookings (2)"
-                  : "Un assigned Bookings (2)"}
-              </Button>
-            </span> */}
-            <span>
-              <Form.Control
-                type="text"
-                placeholder="Search by Date, ID or Order"
-              />
+                <Icon
+                  icon="solar:alt-arrow-left-linear"
+                  width="1.2rem"
+                  height="2.2rem"
+                  style={{ color: "#202224", fontWeight: "bold" }}
+                />
+              </span>
+              <span style={{ color: "#A6A7A7" }}>Assign Driver</span>
             </span>
             <span>
-              <Form.Select>
-                <option value="">Filter</option>
-                <option value={"driver"}>Driver</option>
-                <option value={"helper"}>Helper</option>
-                <option value={"both"}>Helper and Delivery</option>
-              </Form.Select>
+              <p
+                style={{
+                  color: "rgb(166, 167, 167)",
+                  paddingRight: "13rem",
+                  fontSize: ".8rem",
+                }}
+              >
+                <span>Cargo Van
+                </span> <br />
+                <span>#4010</span>
+              </p>
             </span>
-          </span>
+          </div>
+          <div></div>{" "}
+          <div className="promotion_container">
+            <div>
+              <Form className="promotion_container_form">
+                <Form.Group className="mb-3">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control type="text" placeholder="Enter Driver Name" />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Email</Form.Label>
+                  <Form.Control type="text" placeholder="Enter Driver Email ID" />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Mobile</Form.Label>
+                  <Form.Control type="text" placeholder="Enter Mobile No." />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>ID</Form.Label>
+                  <Form.Control type="text" placeholder="Enter Assigned ID" />
+                </Form.Group>
+
+                <div className="bannerBtn">
+                  <Button type="submit">Add vehicle</Button>
+                </div>
+              </Form>
+            </div>
+          </div>
         </div>
-        <div></div>
-        <div className="mt-3">
-          <Table style={{ textAlign: "center" }}>
-            <thead>
-              <tr style={{ border: "none" }}>
-                <th
-                  style={{
-                    backgroundColor: "#F1F4F9",
-                    borderRadius: "12px 0 0 12px",
-                    color: "#202224",
-                    border: "none",
-                  }}
-                >
-                  ID
-                </th>
-                <th
-                  style={{
-                    backgroundColor: "#F1F4F9",
-                    color: "#202224",
-                    border: "none",
-                  }}
-                >
-                  Name
-                </th>
-
-                <th
-                  style={{
-                    backgroundColor: "#F1F4F9",
-                    color: "#202224",
-                    border: "none",
-                  }}
-                >
-                  Last Payment
-                </th>
-
-                <th
-                  style={{
-                    backgroundColor: "#F1F4F9",
-                    color: "#202224",
-                    border: "none",
-                  }}
-                >
-                  Payment Status
-                </th>
-
-                <th
-                  style={{
-                    backgroundColor: "#F1F4F9",
-                    borderRadius: "0 12px 12px 0",
-                    color: "#202224",
-                    border: "none",
-                  }}
-                >
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style={{ border: "none" }}>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>Suraj Singh</td>
-                <td style={{ border: "none" }}>2/11/2012</td>
-                <td
-                  style={{
-                    borderStyle: "none",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: "1rem",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {!isPaid ? (
-                      <>
-                        <Button
-                          style={{
-                            backgroundColor: "#FEBF05",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "9px",
-                          }}
-                        >
-                          Requested
-                        </Button>
-                        <Button
-                          onClick={() => setIsPaid(true)}
-                          style={{
-                            backgroundColor: "#B3E9E1",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "9px",
-                          }}
-                        >
-                          Pay
-                        </Button>
-                      </>
-                    ) : (
-                      <Button
-                        style={{
-                          backgroundColor: "green",
-                          color: "white",
-                          border: "none",
-                          borderRadius: "9px",
-                        }}
-                      >
-                        Paid
-                      </Button>
-                    )}
+      ) : (
+        <div>
+         
+          <div className="mb-5 mt-2 dashboard_container_split_totals2">
+            <span style={{ display: "flex", gap: ".5rem", fontSize: "2rem" }}>
+              <span
+                onClick={() => navigate("/dashboard/vehicle-type")}
+                style={{ cursor: "pointer" }}
+              >
+                <Icon
+                  icon="solar:alt-arrow-left-linear"
+                  width="1.2rem"
+                  height="2.2rem"
+                  style={{ color: "#202224", fontWeight: "bold" }}
+                />
+              </span>
+              <span style={{ color: "#A6A7A7" }}>Add Vehicle Type</span>
+            </span>
+          </div>
+          <div></div>{" "}
+          <div className="promotion_container">
+            <div>
+              <Form className="promotion_container_form">
+               
+                <div className="promotion_container_split_grid mb-3">
+                  <Form.Group>
+                    <Form.Label>Vehicle Type</Form.Label>
+                    <Form.Control type="text" placeholder="Enter Vehicle Type" />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Vehicle ID</Form.Label>
+                    <Form.Control type="text" placeholder="Enter Vehicle ID" />
+                  </Form.Group>
                   </div>
-                </td>
-                <td style={{ border: "none" }}>#101</td>
-              </tr>
-            </tbody>
-          </Table>
+                  <Form.Group className="mb-3">
+                <Form.Label>Verification</Form.Label>
+                <div
+                  className="promotion_container_bannerImage"
+                  onClick={() => fileInputRef.current.click()}
+                  style={{ cursor: "pointer" }}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={handleImageUpload}
+                  />
+                  {bannerImage ? (
+                    <img
+                      src={bannerImage}
+                      alt="Banner Preview"
+                      className="banner-preview"
+                    />
+                  ) : (
+                    <>
+                      <Icon
+                        icon="solar:upload-line-duotone"
+                        width="2.2rem"
+                        height="2.2rem"
+                        style={{ color: "#202224" }}
+                      />
+                      <p>upload registration certificate</p>
+                    </>
+                  )}
+                </div>
+              </Form.Group>
+                  <Form.Group className="mb-3">
+                <Form.Label>Vehicle Image</Form.Label>
+                <div
+                  className="promotion_container_bannerImage"
+                  onClick={() => fileInputRef1.current.click()}
+                  style={{ cursor: "pointer" }}
+                >
+                  <input
+                    ref={fileInputRef1}
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={handleImageUpload1}
+                  />
+                  {bannerImage1 ? (
+                    <img
+                      src={bannerImage1}
+                      alt="Banner Preview"
+                      className="banner-preview"
+                    />
+                  ) : (
+                    <>
+                      <Icon
+                        icon="solar:upload-line-duotone"
+                        width="2.2rem"
+                        height="2.2rem"
+                        style={{ color: "#202224" }}
+                      />
+                      <p>upload vehicle image</p>
+                    </>
+                  )}
+                </div>
+              </Form.Group>
+               
+               
+                <div className="bannerBtn">
+                  <Button type="submit" onClick={() => setIsNextPage(true)}>
+                    Next
+                  </Button>
+                </div>
+              </Form>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

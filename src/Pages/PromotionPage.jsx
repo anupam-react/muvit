@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import HOC from "../Components/MainComponents/HOC";
 import { Button, Form } from "react-bootstrap";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { createApiData } from "../utiils";
@@ -16,7 +15,14 @@ const PromotionPage = () => {
     percentage:"",
     targetUser:"",
     targetCrateria:"",
+  })
 
+  const [banner , setBanner] = useState({
+    title:"",
+    description:"", 
+    validFrom:"",
+    validTo:"",
+    image:"",
   })
 
   const [bannerImage, setBannerImage] = useState(null);
@@ -32,10 +38,22 @@ const PromotionPage = () => {
       }));
   };
 
-  console.log(coupon)
+  const handleChangeBanner = (e) => {
+    const { name, value } = e.target;
+    setBanner((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+  };
+
+  console.log(banner)
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
+    setBanner((prevData) => ({
+      ...prevData,
+      image: file,
+    }));
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -44,6 +62,9 @@ const PromotionPage = () => {
       reader.readAsDataURL(file);
     }
   };
+
+
+
   const handleCouponSubmit = async(e)=>{
     e.preventDefault()
 
@@ -73,6 +94,34 @@ const PromotionPage = () => {
         percentage:"",
         targetUser:"",
         targetCrateria:"",})
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleBannerSubmit = async(e)=>{
+    e.preventDefault()
+
+    if(!banner?.title || !banner?.description || !banner?.validFrom || !banner?.validTo || !banner?.image){
+        return  warnToast("Please Fill All The Fields")
+    }
+    const data = new FormData();
+    data.append('title', banner?.title);
+    data.append('description', banner?.description);
+    data.append('validFrom', banner?.validFrom);
+    data.append('validTo', banner?.validTo);
+    data.append('image', banner?.image);
+
+    try {
+      const response = await createApiData("https://muvit-project.vercel.app/api/v1/admin/banner", data)
+      console.log(response)
+      setBanner({
+        title:"",
+        description:"", 
+        validFrom:"",
+        validTo:"",
+        image:"",
+        })
     } catch (error) {
       console.log(error)
     }
@@ -112,10 +161,14 @@ const PromotionPage = () => {
         </div>
         <div>
           {isBannerSection ? (
-            <Form className="promotion_container_form">
+            <Form onSubmit={handleBannerSubmit} className="promotion_container_form">
               <Form.Group className="mb-3">
                 <Form.Label>Title</Form.Label>
-                <Form.Control type="text" placeholder="Enter Title" />
+                <Form.Control type="text" placeholder="Enter Title" name="title" value={banner?.title} onChange={handleChangeBanner} />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Description</Form.Label>
+                <Form.Control type="text" placeholder="Enter Title" name="description" value={banner?.description} onChange={handleChangeBanner} />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Banner</Form.Label>
@@ -153,12 +206,12 @@ const PromotionPage = () => {
               <div className="promotion_container_split_grid">
                 <Form.Group>
                   <Form.Label>Publish date</Form.Label>
-                  <Form.Control type="date" />
+                  <Form.Control type="date" name="validFrom" value={banner?.validFrom} onChange={handleChangeBanner}/>
                 </Form.Group>
                 <Form.Group>
                   {" "}
                   <Form.Label>Expiry date</Form.Label>
-                  <Form.Control type="date" />
+                  <Form.Control type="date" name="validTo" value={banner?.validTo} onChange={handleChangeBanner}/>
                 </Form.Group>{" "}
               </div>
               <div className="bannerBtn">

@@ -1,11 +1,12 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import HOC from "../../Components/MainComponents/HOC";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useNavigate } from "react-router-dom";
+import { createApiData, fetchApiData } from "../../utiils";
+import { warnToast } from "../../Components/Toast";
 
 const AddDeliveryZone = () => {
-  const [isBannerSection, setIsBannerSection] = useState(true);
   const [street, setStreet] = useState("");
   const [state, setState] = useState("");
   const [city, setCity] = useState("");
@@ -13,30 +14,104 @@ const AddDeliveryZone = () => {
   const [pinCode, setPinCode] = useState("");
   const [assignProfile, setAssignProfile] = useState("");
   const [vehicleType, setVehicleType] = useState("");
-  const [title, setTitle] = useState("");
-  const [publishDate, setPublishDate] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [couponCode, setCouponCode] = useState("");
-  const [offer, setOffer] = useState("");
-  const [targetUser, setTargetUser] = useState("");
-  const [targetCrateria, setTargetCrateria] = useState("");
-  const [bannerImage, setBannerImage] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
   const [id, setId] = useState("");
+  const [allTypes, setAllTypes] = useState([]);
 
   const fileInputRef = useRef(null);
   const [isNextPage, setIsNextPage] = useState(false);
   const navigate = useNavigate();
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setBannerImage(reader.result);
-      };
-      reader.readAsDataURL(file);
+
+  const countries = [
+    "USA",
+    "Canada",
+    "United Kingdom",
+    "Australia",
+    "Germany",
+    "France",
+    "India",
+    "China",
+    "Japan",
+    "Brazil",
+    "South Africa",
+    "Mexico",
+    "Russia",
+    "Italy",
+    "Spain",
+    "Netherlands",
+    "Sweden",
+    "Norway",
+    "Switzerland",
+    "New Zealand",
+    // Add more countries as needed
+  ];
+
+  async function getType() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/VechileType"
+    );
+    setAllTypes(data?.data);
+  }
+  console.log(allTypes);
+
+  useEffect(() => {
+    getType();
+  }, []);
+
+  const handleDeliveryZoneSubmit = async (e) => {
+    e.preventDefault();
+
+    if (
+      !street ||
+      !city ||
+      !state ||
+      !country ||
+      !pinCode ||
+      !assignProfile ||
+      !vehicleType ||
+      !name ||
+      !email ||
+      !mobile ||
+      !id
+    ) {
+      return warnToast("Please Fill All The Fields");
+    }
+
+    const formData = {
+      street: street,
+      city: city,
+      state: state,
+      country: country,
+      pincode: pinCode,
+      assignProfile: assignProfile, //   enum: ["PARTNER", "SUB-ADMIN", "HELPER", "COURIER"],
+      vechileType: vehicleType,
+      name: name,
+      email: email,
+      mobileNumber: mobile,
+      Id: id,
+      status: false,
+    };
+    try {
+      const response = await createApiData(
+        "https://muvit-project.vercel.app/api/v1/admin/delivery-zones",
+        formData
+      );
+      console.log(response);
+      setStreet("");
+      setState("");
+      setCity("");
+      setCountry("");
+      setPinCode("");
+      setAssignProfile("");
+      setVehicleType("");
+      setName("");
+      setEmail("");
+      setMobile("");
+      setId("");
+    } catch (error) {
+      console.log(error);
     }
   };
   return (
@@ -80,26 +155,49 @@ const AddDeliveryZone = () => {
           <div></div>{" "}
           <div className="promotion_container">
             <div>
-              <Form className="promotion_container_form">
+              <Form
+                onSubmit={handleDeliveryZoneSubmit}
+                className="promotion_container_form"
+              >
                 <Form.Group className="mb-3">
                   <Form.Label>Name</Form.Label>
-                  <Form.Control type="text" placeholder="Enter Name" />
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </Form.Group>
                 <Form.Group className="mb-3">
                   <Form.Label>Email</Form.Label>
-                  <Form.Control type="text" placeholder="Enter Email" />
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </Form.Group>
                 <Form.Group className="mb-3">
                   <Form.Label>Mobile</Form.Label>
-                  <Form.Control type="text" placeholder="Enter Mobile No." />
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Mobile No."
+                    value={mobile}
+                    onChange={(e) => setMobile(e.target.value)}
+                  />
                 </Form.Group>
                 <Form.Group className="mb-3">
                   <Form.Label>ID</Form.Label>
-                  <Form.Control type="text" placeholder="Enter Assigned ID" />
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter Assigned ID"
+                    value={id}
+                    onChange={(e) => setId(e.target.value)}
+                  />
                 </Form.Group>
 
                 <div className="bannerBtn">
-                  <Button type="button">Create Delivery Zone</Button>
+                  <Button type="submit">Create Delivery Zone</Button>
                 </div>
               </Form>
             </div>
@@ -135,46 +233,84 @@ const AddDeliveryZone = () => {
               <Form className="promotion_container_form">
                 <Form.Group className="mb-3">
                   <Form.Label>Street</Form.Label>
-                  <Form.Control type="text" placeholder="Enter Street" />
+                  <Form.Control
+                    type="text"
+                    placeholder="Write Street Address"
+                    value={street}
+                    onChange={(e) => setStreet(e.target.value)}
+                  />
                 </Form.Group>
 
                 <div className="promotion_container_split_grid">
                   <Form.Group>
                     <Form.Label>State</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Coupon Code" />
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter State"
+                      value={state}
+                      onChange={(e) => setState(e.target.value)}
+                    />
                   </Form.Group>
                   <Form.Group>
                     <Form.Label>City</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Coupon Code" />
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter City"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                    />
                   </Form.Group>
                   <Form.Group>
                     <Form.Label>Country</Form.Label>
-                    <Form.Select defaultValue="Choose...">
-                      <option>select country</option>
-                      <option value="1">One</option>
-                      <option value="2">Two</option>
+                    <Form.Select
+                      defaultValue="Choose..."
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                    >
+                      <option disabled>Select Country</option>
+                      {countries.map((country, index) => (
+                        <option key={index} value={country}>
+                          {country}
+                        </option>
+                      ))}
                     </Form.Select>
                   </Form.Group>
                   <Form.Group>
                     <Form.Label>Pincode</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Pin Code" />
+                    <Form.Control
+                      type="text"
+                      placeholder="Enter Pin Code"
+                      value={pinCode}
+                      onChange={(e) => setPinCode(e.target.value)}
+                    />
                   </Form.Group>
                   <Form.Group>
                     <Form.Label>Assign Profile</Form.Label>
-                    <Form.Select defaultValue="Choose...">
-                      <option>Select</option>
-                      <option value="1">Driver</option>
-                      <option value="2">Helper</option>
-                      <option value="3">Helper&Delivery</option>
+                    <Form.Select
+                      defaultValue="Choose..."
+                      value={assignProfile}
+                      onChange={(e) => setAssignProfile(e.target.value)}
+                    >
+                      <option disabled>Select Assign Profile</option>
+                      <option value="PARTNER">PARTNER</option>
+                      <option value="SUB-ADMIN">SUB-ADMIN</option>
+                      <option value="HELPER">HELPER</option>
+                      <option value="COURIER">COURIER</option>
                     </Form.Select>
                   </Form.Group>
                   <Form.Group>
                     <Form.Label>Vehicle Type</Form.Label>
-                    <Form.Select defaultValue="Choose...">
-                      <option>Select</option>
-                      <option value="1">Truckbox</option>
-                      <option value="2">Pickup</option>
-                      <option value="3">Helper&Muvit Express</option>
+                    <Form.Select
+                      defaultValue="Choose..."
+                      value={vehicleType}
+                      onChange={(e) => setVehicleType(e.target.value)}
+                    >
+                      <option disabled>Select Vehicle Type</option>
+                      {allTypes?.map((item, index) => (
+                        <option key={index} value={item?._id}>
+                          {item?.name}
+                        </option>
+                      ))}
                     </Form.Select>
                   </Form.Group>
                 </div>

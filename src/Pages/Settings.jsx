@@ -2,14 +2,113 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import HOC from "../Components/MainComponents/HOC";
 import { Button, Form } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createApiData, fetchApiData, updateApiData } from "../utiils";
 
 const Settings = () => {
+  const [contact, setContact] = useState({
+    mobileNumber:"",
+    email:"",
+    address:"",
+    website:"",
+    website1:"",
+    desc:""
+  })
+
+  const [policyHeader , setPolicyHeader] = useState("")
+  const [policy , setPolicy] = useState({})
+
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [isEdit, setIsEdit] = useState(false);
-  const initialContent = `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`;
-  const [content, setContent] = useState(initialContent);
+
+
+  
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setContact((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+  };
+
+  async function getContact() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/call-us"
+    );
+    setContact(data?.data[0]);
+  }
+  async function getPolicy() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/privacy"
+    );
+    setPolicy(data?.data[0]);
+  }
+ console.log(policy)
+
+  useEffect(()=>{
+    getContact()
+    getPolicy()
+  },[])
+
+  const handleContact = async (e) => {
+    e.preventDefault();
+
+    const formData = {
+      mobileNumber:  contact?.mobileNumber ,
+      email: contact?.email ,
+      address: contact?.address, 
+      website: contact?.website ,
+      website1: contact?.website1 ,
+      desc: contact?.desc,
+    };
+    try {
+      if(!contact?._id){
+        const response = await createApiData(
+          "https://muvit-project.vercel.app/api/v1/admin/call/us",
+          formData
+        )
+        console.log(response);
+      }
+        else{
+          await updateApiData(
+            `https://muvit-project.vercel.app/api/v1/admin/call-us/${contact?._id}`,
+            formData
+          );
+        }
+     
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handlePolicy = async (e) => {
+    e.preventDefault();
+
+    const formData = {
+      header:  policyHeader || policy?.header 
+    };
+    try {
+      if(!policy?._id){
+        const response = await createApiData(
+          "https://muvit-project.vercel.app/api/v1/admin/privacy",
+          formData
+        )
+        console.log(response);
+      }
+        else{
+          await updateApiData(
+            `https://muvit-project.vercel.app/api/v1/admin/privacy/${policy?._id}`,
+            formData
+          );
+        }
+     
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div>
@@ -78,7 +177,7 @@ const Settings = () => {
                     color: "#202224",
                   }}
                 >
-                  Lorem Ipsum{" "}
+                   Privacy Policy
                   <span>
                     <Icon
                       icon="material-symbols-light:edit-outline"
@@ -91,69 +190,26 @@ const Settings = () => {
                 </p>
               </div>
               <div className="SettingParagraph">
-                <Form>
+                <Form onSubmit={handlePolicy}>
                   <Form.Group controlId="exampleForm.ControlTextarea1">
                     <Form.Control
                       as="textarea"
+                      type="text"
                       rows={16}
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
+                      value={ policyHeader || policy?.header}
+                    onChange={(e)=> setPolicyHeader(e.target.value)}
                       readOnly={!isEdit}
                     />
                   </Form.Group>
-                </Form>
-                {/* <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-                  irure dolor in reprehenderit in voluptate velit esse cillum
-                  dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                  cupidatat non proident, sunt in culpa qui officia deserunt
-                  mollit anim id est laborum. Lorem ipsum dolor sit amet
-                  Consectetur adipiscing elitsed Do eiusmod tempor incididunt ut
-                  labore et dolore magna aliqua Ut enim ad minim veniam Oquis
-                  nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                  commodo consequat. Duis aute irure dolor in reprehenderit in
-                  voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-                  irure dolor in reprehenderit in voluptate velit esse cillum
-                  dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                  cupidatat non proident, sunt in culpa qui officia deserunt
-                  mollit anim id est laborum. Lorem ipsum dolor sit amet,
-                  consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                  ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                  quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-                  ea commodo consequat. Duis aute irure dolor in reprehenderit
-                  in voluptate velit esse cillum dolore eu fugiat nulla
-                  pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-                  in culpa qui officia deserunt mollit anim id est laborum.
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-                  irure dolor in reprehenderit in voluptate velit esse cillum
-                  dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                  cupidatat non proident, sunt in culpa qui officia deserunt
-                  mollit anim id est laborum. Lorem ipsum dolor sit amet,
-                  consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                  ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                  quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-                  ea commodo consequat. Duis aute irure dolor in reprehenderit
-                  in voluptate velit esse cillum dolore eu fugiat nulla
-                  pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-                  in culpa qui officia deserunt mollit anim id est laborum.
-                  Update
-                </p> */}
-              </div>
-              {isEdit && (
+                  {isEdit && (
                 <div className="setting_edit_btn">
-                  <Button>Update</Button>
+                  <Button type="submit">Update</Button>
                 </div>
               )}
+                </Form>
+                
+              </div>
+             
             </div>
           ) : pathname === "/setting/contact-us" ? (
             <div>
@@ -179,7 +235,7 @@ const Settings = () => {
                   </p>
                 </div>
                 <div className="mt-2">
-                  <Form style={{ color: "#909091" }} className="setting_form">
+                  <Form onSubmit={handleContact} style={{ color: "#909091" }} className="setting_form">
                     {" "}
                     <Form.Group className="mb-3">
                       <Form.Label>Address</Form.Label>
@@ -187,6 +243,9 @@ const Settings = () => {
                         readOnly={!isEdit}
                         type="text"
                         placeholder="Enter Address"
+                        name="address"
+                        value={contact?.address}
+                        onChange={handleChange}
                       />
                     </Form.Group>
                     <Form.Group className="mb-3">
@@ -195,6 +254,9 @@ const Settings = () => {
                         type="text"
                         readOnly={!isEdit}
                         placeholder="company123@gmail.com"
+                        name="email"
+                        value={contact?.email}
+                        onChange={handleChange}
                       />
                     </Form.Group>
                     <Form.Group className="mb-3">
@@ -203,19 +265,25 @@ const Settings = () => {
                         readOnly={!isEdit}
                         type="text"
                         placeholder="www.website.com"
+                        name="website"
+                        value={contact?.website}
+                        onChange={handleChange}
                       />
                     </Form.Group>
                     <Form.Group className="mb-3">
-                      <Form.Label>Website</Form.Label>
+                      <Form.Label>Website1</Form.Label>
                       <Form.Control
                         readOnly={!isEdit}
                         type="text"
                         placeholder="www.website.com"
+                        name="website1"
+                        value={contact?.website1}
+                        onChange={handleChange}
                       />
                     </Form.Group>
                     {isEdit && (
                       <div className="setting_edit_btn">
-                        <Button>Update</Button>
+                        <Button type="submit">Update</Button>
                       </div>
                     )}
                   </Form>

@@ -8,16 +8,13 @@ const AddDeliveryPartner = () => {
   const [isAssigned, setIsAssigned] = useState(true);
   const [isPaid, setIsPaid] = useState(false);
   const [filter, setFilter] = useState("driver");
+
   const navigate = useNavigate();
+
   return (
     <div>
-      {" "}
       <div className="dashboard_container_split2">
-        <div className="delivery_container_split_totals">
-          <div></div>
-          <div>{/* <Button>+ Add Zone</Button> */}</div>
-        </div>
-        <div className="dashboard_container_split_totals2">
+           <div className="dashboard_container_split_totals2">
           <span style={{ display: "flex", gap: ".5rem", fontSize: "2rem" }}>
             <span
               onClick={() => navigate("/dashboard/delivery-partner")}
@@ -40,20 +37,7 @@ const AddDeliveryPartner = () => {
             </span>
           </span>
           <span style={{ display: "flex", gap: "1rem" }}>
-            {/* <span>
-              <Button
-                style={{
-                  backgroundColor: isAssigned ? "#00B69B" : "#F1F4F9",
-                  color: isAssigned ? "white" : "#202224",
-                  border: "none",
-                }}
-                onClick={() => setIsAssigned(!isAssigned)}
-              >
-                {isAssigned
-                  ? "Assigned Bookings (2)"
-                  : "Un assigned Bookings (2)"}
-              </Button>
-            </span> */}
+            
             <span>
               <Form.Control
                 type="text"
@@ -230,6 +214,8 @@ const AddDeliveryPartner = () => {
           </Table>
         </div>
       </div>
+
+
     </div>
   );
 };

@@ -663,3 +663,18 @@ font-weight: 700;
 .assign-button:hover {
   background-color: #019a7a;
 }
+
+.active-status{
+  color: #FFFFFF;
+  background-color: #00B69B;
+  border-radius: 9px;
+  padding: 5px 10px;
+  border: "none",
+}
+.inactive-status{
+  color: #FFFFFF;
+  background-color: #FCBE2D;
+  border-radius: 9px;
+  padding: 5px 10px;
+  border: "none",
+}

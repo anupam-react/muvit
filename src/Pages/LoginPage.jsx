@@ -105,7 +105,7 @@ const LoginPage = () => {
                     style={{
                       cursor: "pointer",
                     }}
-                    onClick={() => navigate("/forgotpassword")}
+                    onClick={() => navigate("/forgotpassword/email")}
                   >
                     <p>Forgot Password?</p>
                   </span>

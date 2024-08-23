@@ -1,11 +1,24 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import HOC from "../../Components/MainComponents/HOC";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Form, Table } from "react-bootstrap";
+import { Button, Form, Table } from "react-bootstrap";
+import { fetchApiData } from "../../utiils";
+import { useEffect, useState } from "react";
 
 const AdminProfile = () => {
   const navigate = useNavigate();
+  const [profile , setProfile] =  useState()
   const { pathname } = useLocation();
+  async function getProfile() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/getprofile"
+    );
+    setProfile(data?.data);
+  }
+
+  useEffect(()=>{
+    getProfile()
+  },[])
   return (
     <div>
       <div className="admin-profile">
@@ -38,8 +51,8 @@ const AdminProfile = () => {
         <div>
           {pathname === "/setting/admin" ? (
             <div>
-              <div>
-                <Table style={{ textAlign: "center" }}>
+              <div >
+                <Table  style={{height:"70vh" , overflowY:"scroll" , textAlign: "center"}}>
                   <thead>
                     <tr style={{ border: "none" }}>
                       <th
@@ -102,21 +115,15 @@ const AdminProfile = () => {
                   </thead>
                   <tbody>
                     <tr style={{ border: "none" }}>
-                      <td style={{ border: "none" }}>#101</td>
-                      <td style={{ border: "none" }}>#101</td>
-                      <td style={{ border: "none" }}>#101</td>
-                      <td style={{ border: "none" }}>#101</td>
+                      <td style={{ border: "none" }}>{profile?.user?.fullName}</td>
+                      <td style={{ border: "none" }}>{profile?.user?.userType}</td>
+                      <td style={{ border: "none" }}>{profile?.user?.email}</td>
+                      <td style={{ border: "none" }}>{profile?.user?.mobileNumber}</td>
                       <td style={{ border: "none" }}>
                         <span
-                          style={{
-                            color: "#4D4E50",
-                            backgroundColor: "#F1F4F9",
-                            borderRadius: "9px",
-                            padding: "5px 10px",
-                            border: "none",
-                          }}
+                        className={profile?.user?.status ? "active-status" : "inactive-status"}
                         >
-                          Active
+                          {profile?.user?.status ? "Acive": "Inactive"}
                         </span>
                       </td>
                       <td style={{ border: "none" }}>
@@ -130,6 +137,9 @@ const AdminProfile = () => {
                     </tr>
                   </tbody>
                 </Table>
+                <div className="setting_edit_btn">
+                        <Button type="submit">Update</Button>
+                      </div>
               </div>
             </div>
           ) : pathname === "/setting/payment" ? (

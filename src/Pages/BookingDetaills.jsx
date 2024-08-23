@@ -6,9 +6,11 @@ import { fetchApiData, getDateFromISOString } from "../utiils";
 
 const BookingDetaills = () => {
   const [bookingDetails, setBookingDetails] = useState([]);
+
   const navigate = useNavigate();
 
   const {id} = useParams()
+
 
   
   async function getBooking() {

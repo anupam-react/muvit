@@ -18,6 +18,7 @@ const Settings = () => {
   const [policyHeader , setPolicyHeader] = useState("")
   const [policy , setPolicy] = useState({})
 
+
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [isEdit, setIsEdit] = useState(false);
@@ -44,7 +45,7 @@ const Settings = () => {
     );
     setPolicy(data?.data[0]);
   }
- console.log(policy)
+
 
   useEffect(()=>{
     getContact()

@@ -24,7 +24,7 @@ const All_Routes = () => {
     <Routes>
       <Route path="/" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-      <Route path="/forgotpassword" element={<ForgotPassword />} />
+      <Route path="/forgotpassword/:id" element={<ForgotPassword />} />
       <Route path="/forgotpassword/email" element={<ForgotPassword1 />} />
       <Route
         path="/forgotpassword/verification"

@@ -3,14 +3,68 @@ import HOC from "../Components/MainComponents/HOC";
 import { Button, Form, Table } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchApiData, getDateFromISOString } from "../utiils";
+import { createApiData, fetchApiData, getDateFromISOString } from "../utiils";
+import axios from "axios";
 
 const BookingPage = () => {
   const [isAssigned, setIsAssigned] = useState(false);
   const [filter, setFilter] = useState("");
   const [allBooking, setAllBooking] = useState([]);
   const [isPopupOpen, setPopupOpen] = useState(false);
+  const [allUsers, setAllUsers] = useState([]);
+  const [pickupAddress, setpickupAddress] = useState("");
+  const [dropAddress, setdropAddress] = useState("");
+  const [coordinates, setCoordinates] = useState(null);
+  const [coordinates1, setCoordinates1] = useState(null);
+  const [error, setError] = useState(null);
+  const [assignRole , setAssignRole] = useState({
+    role:"PARTNER",
+    partnerId:"",
+    pickupDate:"",
+    pickupTime:""
+  })
+  const [debouncedAddress, setDebouncedAddress] = useState(pickupAddress);
+  const [debouncedAddress1, setDebouncedAddress1] = useState(dropAddress);
+
+
   const navigate = useNavigate();
+
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setAssignRole((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+  };
+
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+        setDebouncedAddress(pickupAddress);
+        setDebouncedAddress1(dropAddress);
+    }, 1000); // 500ms delay
+
+    return () => {
+        clearTimeout(timerId);
+    };
+}, [pickupAddress, dropAddress]);
+
+useEffect(() => {
+    if (debouncedAddress || debouncedAddress1) {
+        getCoordinates(debouncedAddress , setCoordinates);
+      getCoordinates(debouncedAddress1 , setCoordinates1);
+    }
+}, [debouncedAddress , debouncedAddress1]);
+
+
+  async function getUsers() {
+    const data = await fetchApiData(
+      `https://muvit-project.vercel.app/api/v1/admin/profile?currentRole=${assignRole?.role}`
+    );
+    setAllUsers(data?.data);
+  }
+  console.log(allUsers);
 
   async function getBooking() {
     const data = await fetchApiData(
@@ -19,10 +73,74 @@ const BookingPage = () => {
     setAllBooking(data?.data);
   }
 
+useEffect(()=>{
+  getUsers();
+},[assignRole.role])
+
   useEffect(() => {
     getBooking();
+  
   }, []);
 
+  const getCoordinates = async (address ,setCoordinate) => {
+    const apiKey = "AIzaSyAxvv_NnQpCjr0n4J1zSomdYInOmvoKOjc"; // Replace with your Google Maps API key
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+      address
+    )}&key=${apiKey}`;
+
+    try {
+      const response = await axios.get(url);
+      if (response.data.status === "OK") {
+        const location = response.data.results[0].geometry.location;
+        setCoordinate({ latitude: location.lat, longitude: location.lng });
+        setError(null);
+      } else {
+        setError("Unable to find the location. Please try again.");
+        setCoordinate(null);
+      }
+    } catch (err) {
+      setError("Error occurred while fetching the data.");
+      setCoordinate(null);
+    }
+  };
+
+  console.log(coordinates , coordinates1)
+
+  const handleAssignRoleSubmit = async (e) => {
+    e.preventDefault();
+
+
+    const formData = {
+      role: assignRole?.role,
+      partnerId: assignRole?.partnerId,
+      pickupDate: assignRole?.pickupDate,
+      pickupTime: assignRole?.pickupTime,
+      pickupCoordinates: {
+        type: "Pickup",
+        coordinates: [
+            coordinates?.latitude,
+            coordinates?.longitude
+        ]
+    },
+    dropCoordinates: {
+        type: "Drop",
+        coordinates: [
+          coordinates1?.latitude,
+          coordinates1?.longitude
+        ]
+    },
+    };
+    try {
+      const response = await createApiData(
+        `https://muvit-project.vercel.app/api/v1/admin/bookings/assignbyId/${isPopupOpen}`,
+        formData
+      );
+      console.log(response);
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div>
       {" "}
@@ -47,7 +165,7 @@ const BookingPage = () => {
                   color: isAssigned ? "white" : "#202224",
                   border: "none",
                 }}
-                onClick={() => setIsAssigned(!isAssigned)}
+                onClick={() => {setIsAssigned(!isAssigned)}}
               >
                 {isAssigned
                   ? "Un assigned Bookings (2)"
@@ -407,7 +525,7 @@ const BookingPage = () => {
                     </td>
                     <td style={{ border: "none" }}>
                       <div
-                      onClick={()=> setPopupOpen(true)}
+                        onClick={() => setPopupOpen(item?._id)}
                         className={
                           item?.user?.currentRole
                             ? "complete-booking"
@@ -437,46 +555,93 @@ const BookingPage = () => {
           </div>
         )}
       </div>
-      {isPopupOpen &&  <div className="popup-overlay" onClick={() => setPopupOpen(false)}>
-      <div className="popup" onClick={(e) => e.stopPropagation()}>
-        <div style={{display:"flex", alignItems:"center", gap:"20px"}}>
-        <p style={{fontSize:"24px", color:"#202224" , fontWeight:700}}>Assign Role To Order</p>
-        <div className="close-button" onClick={() => setPopupOpen(false)}>
-         <img src="../Vector (45).png" alt="" />
+      {isPopupOpen && (
+        <div className="popup-overlay" onClick={() => setPopupOpen(false)}>
+          <div className="popup" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+              <p
+                style={{ fontSize: "24px", color: "#202224", fontWeight: 700 }}
+              >
+                Assign Role To Order
+              </p>
+              <div className="close-button" onClick={() => setPopupOpen(false)}>
+                <img src="../Vector (45).png" alt="" />
+              </div>
+            </div>
+
+            <label htmlFor="role" className="input-label">
+              Choose Role
+            </label>
+            <select id="role" className="input-field" name="role" value={assignRole?.role} onChange={handleChange}>
+              <option value="helper" disabled>
+                Select Role
+              </option>
+              <option value="PARTNER">PARTNER</option>
+              <option value="HELPER">HELPER</option>
+              <option value="COURIER">COURIER</option>
+            </select>
+
+            <label htmlFor="booking" className="input-label">
+              Assign Booking To
+            </label>
+            <select id="booking" className="input-field" name="partnerId" value={assignRole?.partnerId} onChange={handleChange}>
+              <option value="" disabled>Choose ID And Name</option>
+              {allUsers?.map((data, i)=>(
+                   <option value={data?.user?._id}>{data?.user?.userId} , {data?.user?.fullName}</option>
+              ))}
+            </select>
+
+            <label htmlFor="pickup" className="input-label">
+              Add Pickup Location
+            </label>
+            <input
+              type="text"
+              id="pickup"
+              className="input-field"
+              placeholder="Address"
+              value={pickupAddress}
+              onChange={(e)=>{
+                 setpickupAddress(e.target.value)
+                //  getCoordinates(e.target.value)
+                }}
+            />
+
+            <label htmlFor="dropoff" className="input-label">
+              Add Dropoff Location
+            </label>
+            <input
+              type="text"
+              id="dropoff"
+              className="input-field"
+              placeholder="Address"
+              value={dropAddress}
+              onChange={(e)=> setdropAddress(e.target.value)}
+            />
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "20px",
+                marginBottom: "10px",
+              }}
+            >
+              <div>
+                <label htmlFor="date" className="input-label">
+                  Select Date
+                </label>
+                <input type="date" id="date" className="input-field" name="pickupDate" value={assignRole?.pickupDate} onChange={handleChange}/>
+              </div>
+              <div>
+                <label htmlFor="time" className="input-label">
+                  Select Timing
+                </label>
+                <input type="time" id="time" className="input-field" name="pickupTime" value={assignRole?.pickupTime} onChange={handleChange}/>
+              </div>
+            </div>
+            <button className="assign-button" onClick={handleAssignRoleSubmit}>Assign</button>
+          </div>
         </div>
-        </div> 
-        
-        <label htmlFor="role" className="input-label">Choose Role</label>
-        <select id="role" className="input-field">
-          <option value="helper">Helper / Driver / Delivery</option>
-        </select>
-        
-        <label htmlFor="booking" className="input-label" >Assign Booking To</label>
-        <select id="booking" className="input-field">
-          <option value="">Search by ID / Name</option>
-        </select>
-
-        <label htmlFor="pickup" className="input-label">Add Pickup Location</label>
-        <input type="text" id="pickup" className="input-field" placeholder="Address" />
-
-        <label htmlFor="dropoff" className="input-label">Add Dropoff Location</label>
-        <input type="text" id="dropoff" className="input-field" placeholder="Address" />
-<div style={{display:"flex", alignItems:"center", gap:"20px" , marginBottom:"10px"}}>
-
-<div>
-
-        <label htmlFor="date" className="input-label">Select Date</label>
-        <input type="date" id="date" className="input-field" />
-</div>
-<div>
-        <label htmlFor="time" className="input-label">Select Timing</label>
-        <input type="time" id="time" className="input-field" />
-        </div>
-</div>
-        <button className="assign-button">Assign</button>
-      </div>
-    </div>
-}
+      )}
     </div>
   );
 };

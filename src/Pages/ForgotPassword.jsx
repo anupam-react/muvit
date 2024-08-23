@@ -4,14 +4,41 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import InputGroup from "react-bootstrap/InputGroup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { createApiData } from "../utiils";
 const ForgotPassword = () => {
-  const [email, setEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+ const {id} = useParams()
+
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleChangePass = async (e) => {
+    e.preventDefault();
+
+    const formData = {
+      otp:verificationCode,
+      newPassword: password,
+      confirmPassword: confirmPassword
+    };
+
+
+    try {
+      const response = await createApiData(
+        `https://muvit-project.vercel.app/api/v1/admin/changePassword/${id}`,
+        formData
+      );
+      navigate("/")
+      console.log(response);
+
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div>
@@ -30,12 +57,13 @@ const ForgotPassword = () => {
           </div>
           <div>
             <hr />
-            <Form className="login_form_loginPage">
+            <Form className="login_form_loginPage" onSubmit={handleChangePass}>
               <Form.Group className="mb-3 ">
                 <Form.Label>New Password</Form.Label>
                 <Form.Control
                   type="text"
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </Form.Group>
               <Form.Group className="mb-3">
@@ -43,9 +71,9 @@ const ForgotPassword = () => {
                 <InputGroup>
                   <Form.Control
                     type={showPassword ? "text" : "password"}
-                    value={password}
+                    value={confirmPassword}
                     placeholder="Password"
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                   />
                   <InputGroup.Text
                     onClick={toggleShowPassword}
@@ -55,13 +83,22 @@ const ForgotPassword = () => {
                   </InputGroup.Text>
                 </InputGroup>
               </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Otp</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={verificationCode}
+                    placeholder="Password"
+                    onChange={(e) => setVerificationCode(e.target.value)}
+                  />
+              </Form.Group>
 
               <Button
-                onClick={() => navigate("/forgotpassword/email")}
+               
                 className="login_page_btn"
-                // type="submit"
+                 type="submit"
               >
-                <p className="login_page_btn_text">
+                <div className="login_page_btn_text">
                   <span>SET PASSWORD</span>
                   <span>
                     <Icon
@@ -69,7 +106,7 @@ const ForgotPassword = () => {
                       className="login_page_btn_icon"
                     />
                   </span>
-                </p>
+                </div>
               </Button>
             </Form>
           </div>

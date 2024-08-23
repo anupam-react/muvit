@@ -78,7 +78,7 @@ const DeliveryZone = () => {
           </span>
         </div>
         <div></div>
-        <div className="mt-3">
+        <div className="mt-3" style={{height:"70vh" , overflowY:"scroll"}}>
           <Table style={{ textAlign: "center" }}>
             <thead>
               <tr style={{ border: "none" }}>

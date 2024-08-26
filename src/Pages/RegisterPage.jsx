@@ -26,7 +26,7 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password || !firstName || !lastName || !phone) {
+    if (!email || !password || !firstName || !phone) {
       return warnToast("Fill all the fields");
     }
     if (password !== confirmPass) {

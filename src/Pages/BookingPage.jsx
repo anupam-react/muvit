@@ -10,7 +10,9 @@ const BookingPage = () => {
   const [isAssigned, setIsAssigned] = useState(false);
   const [filter, setFilter] = useState("");
   const [allBooking, setAllBooking] = useState([]);
+  const [allUnAssignBooking, setAllUnAssignBooking] = useState([]);
   const [isPopupOpen, setPopupOpen] = useState(false);
+  const [isPopupSuccess, setPopupSuccess] = useState(false);
   const [allUsers, setAllUsers] = useState([]);
   const [pickupAddress, setpickupAddress] = useState("");
   const [dropAddress, setdropAddress] = useState("");
@@ -70,7 +72,8 @@ useEffect(() => {
     const data = await fetchApiData(
       "https://muvit-project.vercel.app/api/v1/admin/bookings"
     );
-    setAllBooking(data?.data);
+    setAllBooking(data?.data?.filter((d)=> d?.status !== "PENDING"));
+    setAllUnAssignBooking(data?.data?.filter((d)=> d?.status === "PENDING"));
   }
 
 useEffect(()=>{
@@ -135,6 +138,11 @@ useEffect(()=>{
         `https://muvit-project.vercel.app/api/v1/admin/bookings/assignbyId/${isPopupOpen}`,
         formData
       );
+      setPopupSuccess(true)
+      setTimeout(()=>{
+        setPopupSuccess(false)
+        setPopupOpen(false)
+      },1500)
       console.log(response);
 
     } catch (error) {
@@ -168,8 +176,8 @@ useEffect(()=>{
                 onClick={() => {setIsAssigned(!isAssigned)}}
               >
                 {isAssigned
-                  ? "Un assigned Bookings (2)"
-                  : "Un assigned Bookings (2)"}
+                  ? `Un assigned Bookings (${allUnAssignBooking?.length})`
+                  : `Un assigned Bookings (${allUnAssignBooking?.length})`}
               </Button>
             </span>
 
@@ -492,9 +500,9 @@ useEffect(()=>{
                 </tr>
               </thead>
               <tbody>
-                {allBooking?.map((item, i) => (
-                  <tr key={i} style={{ border: "none", cursor: "pointer" }}>
-                    <td style={{ border: "none", width: "60px" }}>
+                {allUnAssignBooking?.map((item, i) => (
+                  <tr key={i} style={{ border: "none", cursor: "pointer" }}  >
+                    <td style={{ border: "none", width: "60px" }} onClick={() => navigate(`/booking/${item?._id}`)}>
                       #000_{i + 1}
                     </td>
                     <td style={{ border: "none" }}>{item?.bookingId}</td>
@@ -576,7 +584,7 @@ useEffect(()=>{
               <option value="helper" disabled>
                 Select Role
               </option>
-              <option value="PARTNER">PARTNER</option>
+              <option value="PARTNER">DRIVER</option>
               <option value="HELPER">HELPER</option>
               <option value="COURIER">COURIER</option>
             </select>
@@ -639,6 +647,20 @@ useEffect(()=>{
               </div>
             </div>
             <button className="assign-button" onClick={handleAssignRoleSubmit}>Assign</button>
+          </div>
+        </div>
+      )}
+
+
+      {isPopupSuccess && (
+        <div className="popup-overlay" onClick={() => setPopupOpen(false)}>
+          <div className="popup" onClick={(e) => e.stopPropagation()}>
+            <div style={{display:"flex" , flexDirection:"column", justifyItems:"center", alignItems:"center" , width:"100%"}}>
+           <img src="../Mask group (4).png" alt="" />
+           <p style={{color:"#121212" , fontWeight:700}}>Successfully Assigned Task
+         </p>
+         <p style={{color:"#121212"}}>  {assignRole?.role}</p>
+              </div>
           </div>
         </div>
       )}

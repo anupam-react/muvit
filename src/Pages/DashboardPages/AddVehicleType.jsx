@@ -3,6 +3,7 @@ import { Button, Form, Table } from "react-bootstrap";
 import { useRef, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
+import { createApiData } from "../../utiils";
 
 const AddVehicleType = () => {
   const [vechicle , setVehicle] = useState({
@@ -24,13 +25,13 @@ const AddVehicleType = () => {
   
   if (type === 'file') {
     const file = files[0];
-    setFormData((prevData) => ({
+    setVehicle((prevData) => ({
       ...prevData,
       image: file,
       imagePreview: URL.createObjectURL(file),
     }));
   } else {
-    setFormData((prevData) => ({
+    setVehicle((prevData) => ({
       ...prevData,
       [name]: value,
     }));
@@ -38,9 +39,25 @@ const AddVehicleType = () => {
 };
 
 
-const handleSubmit = (e) => {
+const handleSubmit = async(e) => {
   e.preventDefault();
   
+  const data = new FormData();
+    data.append('name', vechicle?.name);
+    data.append('image', vechicle?.image);
+
+    try {
+      const response = await createApiData("https://muvit-project.vercel.app/api/v1/admin/VechileType", data)
+      console.log(response)
+      setVehicle({
+        name:"",
+        image:"",
+        id:"",
+        registrationImage:""
+        })
+    } catch (error) {
+      console.log(error)
+    }
   // Handle form submission logic here
 };
   const handleImageUpload = (event) => {
@@ -55,6 +72,10 @@ const handleSubmit = (e) => {
   };
   const handleImageUpload1 = (event) => {
     const file = event.target.files[0];
+    setVehicle((prevData) => ({
+      ...prevData,
+      image: file,
+    }));
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -100,7 +121,7 @@ const handleSubmit = (e) => {
           <div></div>{" "}
           <div className="promotion_container">
             <div>
-              <Form className="promotion_container_form">
+              <Form className="promotion_container_form" onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
                   <Form.Label>Name</Form.Label>
                   <Form.Control type="text" placeholder="Enter Driver Name" />
@@ -152,7 +173,7 @@ const handleSubmit = (e) => {
                 <div className="promotion_container_split_grid mb-3">
                   <Form.Group>
                     <Form.Label>Vehicle Type</Form.Label>
-                    <Form.Control type="text" placeholder="Enter Vehicle Type" />
+                    <Form.Control type="text" placeholder="Enter Vehicle Type" name="name" value={vechicle?.name} onChange={handleChange}/>
                   </Form.Group>
                   <Form.Group>
                     <Form.Label>Vehicle ID</Form.Label>

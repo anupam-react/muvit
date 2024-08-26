@@ -48,11 +48,11 @@ const NavBar = ({data}) => {
       path: "/dashboard/add-vehicle-type",
     },
     {
-      name: "Hi, John Doe",
+      name: `Hi, ${data?.user?.fullName}`,
       path: "/setting/admin",
     },
     {
-      name: "Hi, John Doe",
+      name: `Hi, ${data?.user?.fullName}`,
       path: "/setting/payment",
     },
     {

@@ -2,12 +2,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import HOC from "../../Components/MainComponents/HOC";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button, Form, Table } from "react-bootstrap";
-import { fetchApiData } from "../../utiils";
+import { fetchApiData, getDateFromISOString } from "../../utiils";
 import { useEffect, useState } from "react";
 
 const AdminProfile = () => {
   const navigate = useNavigate();
   const [profile , setProfile] =  useState()
+  const [allBooking, setAllBooking] = useState([]);
   const { pathname } = useLocation();
   async function getProfile() {
     const data = await fetchApiData(
@@ -16,8 +17,15 @@ const AdminProfile = () => {
     setProfile(data?.data);
   }
 
+  async function getBooking() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/bookings"
+    );
+    setAllBooking(data?.data);
+  }
   useEffect(()=>{
     getProfile()
+    getBooking()
   },[])
   return (
     <div>
@@ -250,10 +258,11 @@ const AdminProfile = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr style={{ border: "none" }}>
-                        <td style={{ border: "none" }}>#101</td>
-                        <td style={{ border: "none" }}>#101</td>
-                        <td style={{ border: "none" }}>#101</td>
+                      {allBooking?.map((data , i)=>(
+                      <tr style={{ border: "none" }} key={i}>
+                        <td style={{ border: "none" }}>#10{i+1}</td>
+                        <td style={{ border: "none" }}>{getDateFromISOString(data?.createdAt)}</td>
+                        <td style={{ border: "none" }}>{data?.bookingId}</td>
                         <td style={{ border: "none" }}>#101</td>
                         <td style={{ border: "none" }}>
                           <span
@@ -265,12 +274,14 @@ const AdminProfile = () => {
                               border: "none",
                             }}
                           >
-                            Delivered
+                            {data?.paymentStatus}
                           </span>
                         </td>
-                        <td style={{ border: "none" }}>#101</td>
-                        <td style={{ border: "none" }}>#101</td>
+                        <td style={{ border: "none" }}>{data?.totalPrice}</td>
+                        <td style={{ border: "none" }}>000</td>
                       </tr>
+
+                      ))}
                     </tbody>
                   </Table>
                 </div>

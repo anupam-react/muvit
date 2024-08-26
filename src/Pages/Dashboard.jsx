@@ -10,7 +10,22 @@ const Dashboard = () => {
   const [partner, setPartner] = useState([])
   const [type, setType] = useState([])
   const [zone, setZone] = useState([])
+  const [allBooking, setAllBooking] = useState([]);
+  const [processedBooking, setProcessedBooking] = useState([]);
+  const [pendingBooking, setPendingBooking] = useState([]);
   const navigate = useNavigate();
+
+  async function getBooking() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/bookings"
+    );
+    setAllBooking(data?.data);
+    setProcessedBooking(data?.data?.filter((d)=> d?.status === "COMPLETED"));
+    setPendingBooking(data?.data?.filter((d)=> d?.status === "PENDING"));
+    
+  }
+
+
 
   async function getUsers() {
     const data = await fetchApiData(
@@ -41,6 +56,7 @@ const Dashboard = () => {
   }
 
   useEffect(()=>{
+    getBooking()
     getUsers()
     getPartner()
     getType()
@@ -295,14 +311,14 @@ const Dashboard = () => {
                     <ProgressBar
                       className="progress-bar-custom1"
                       variant="success"
-                      now={40}
+                      now={Math.round(pendingBooking?.length/ allBooking?.length)*100}
                     />
 
-                    <p>Pending (630 out of 3000)</p>
+                    <p>Pending ({pendingBooking?.length} out of {allBooking?.length})</p>
                   </div>
                 </div>
                 <div>
-                  <p className="dashboard_container_split_totals5_text">21%</p>
+                  <p className="dashboard_container_split_totals5_text">{Math.round(pendingBooking?.length/ allBooking?.length)*100}%</p>
                 </div>
               </div>
               <div className="dashboard_container_split_totals3121">
@@ -318,14 +334,14 @@ const Dashboard = () => {
                     <ProgressBar
                       className="progress-bar-custom"
                       variant="success"
-                      now={76}
+                      now={Math.round(processedBooking?.length/ allBooking?.length)*100}
                     />
 
-                    <p>Pending (630 out of 3000)</p>
+                    <p>Processed ({processedBooking?.length} out of {allBooking?.length})</p>
                   </div>
                 </div>
                 <div>
-                  <p className="dashboard_container_split_totals5_text">76%</p>
+                  <p className="dashboard_container_split_totals5_text">{Math.round(processedBooking?.length/ allBooking?.length)*100}%</p>
                 </div>
               </div>
             </div>
@@ -365,19 +381,18 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
+                  {allBooking?.map((data , i)=>(
                   <tr style={{ border: "none" }}>
-                    <td style={{ border: "none" }}>#101</td>
+                    <td style={{ border: "none" }}>{data?.bookingId}</td>
                     <td style={{ border: "none" }}>
                       <span
-                        style={{
-                          color: "#4D4E50",
-                          backgroundColor: "#F1F4F9",
-                          borderRadius: "9px",
-                          padding: "5px 10px",
-                          border: "none",
-                        }}
+                        className={
+                          data?.status === "COMPLETED"
+                            ? "complete-booking"
+                            : "pending-booking"
+                        }
                       >
-                        Delivered
+                        {data?.status}
                       </span>
                     </td>
                     <td style={{ border: "none" }}>
@@ -389,6 +404,8 @@ const Dashboard = () => {
                       />
                     </td>
                   </tr>
+
+                  ))}
                 </tbody>
               </Table>
             </div>

@@ -1,15 +1,44 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button, Form, Table } from "react-bootstrap";
-import { useState } from "react";
-import HOC from "../../Components/MainComponents/HOC";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { fetchApiData, getDateFromISOString, updateApiData } from "../../utiils";
 
 const AddDeliveryPartner = () => {
   const [isAssigned, setIsAssigned] = useState(true);
   const [isPaid, setIsPaid] = useState(false);
   const [filter, setFilter] = useState("driver");
-
+  const [allRefund, setAllRefund] = useState([]);
   const navigate = useNavigate();
+    
+  async function getUsers() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/booking/getAllRefundData/by-type/BOOKING"
+    );
+    setAllRefund(data?.data?.filter((d)=> d?.user?.currentRole === "PARTNER"));
+  }
+ console.log(allRefund)
+
+ const handleUpdateRefundSubmit = async (id) => {
+  const formData = {
+    refundStatus:'COMPLETED'
+  };
+  try {
+    const response = await updateApiData(
+      `https://muvit-project.vercel.app/api/v1/admin/bookings/updatePaymentStatus/${id}`,
+      formData
+    );
+
+    console.log(response);
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+  useEffect(()=>{
+    getUsers()
+  },[])
 
   return (
     <div>
@@ -150,14 +179,15 @@ const AddDeliveryPartner = () => {
               </tr>
             </thead>
             <tbody>
+              {allRefund?.map((item, i)=>(
               <tr style={{ border: "none" }}>
-                <td style={{ border: "none" }}>#101</td>
-                <td style={{ border: "none" }}>Suraj Singh</td>
-                <td style={{ border: "none" }}>300</td>
-                <td style={{ border: "none" }}>$1000</td>
-                <td style={{ border: "none" }}>2/11/2012</td>
-                <td style={{ border: "none" }}>$400</td>
-                <td style={{ border: "none" }}>30%</td>
+                <td style={{ border: "none" }}>{item?.booking?.bookingId}</td>
+                <td style={{ border: "none" }}>{item?.user?.fullName}</td>
+                <td style={{ border: "none" }}>{item?.booking?.distance}</td>
+                <td style={{ border: "none" }}>${item?.booking?.totalPrice}</td>
+                <td style={{ border: "none" }}>{getDateFromISOString(item?.booking?.createdAt)}</td>
+                <td style={{ border: "none" }}>${item?.booking?.driverAmount}</td>
+                <td style={{ border: "none" }}>40%</td>
                 <td
                   style={{
                     borderStyle: "none",
@@ -170,7 +200,7 @@ const AddDeliveryPartner = () => {
                       justifyContent: "center",
                     }}
                   >
-                    {!isPaid ? (
+                    {!item?.refundStatus === "COMPLETED" ? (
                       <>
                         <Button
                           style={{
@@ -183,7 +213,7 @@ const AddDeliveryPartner = () => {
                           Requested
                         </Button>
                         <Button
-                          onClick={() => setIsPaid(true)}
+                          onClick={() =>handleUpdateRefundSubmit(item?._id)}
                           style={{
                             backgroundColor: "#B3E9E1",
                             color: "white",
@@ -197,7 +227,7 @@ const AddDeliveryPartner = () => {
                     ) : (
                       <Button
                         style={{
-                          backgroundColor: "green",
+                          backgroundColor: "#00B69B",
                           color: "white",
                           border: "none",
                           borderRadius: "9px",
@@ -208,8 +238,17 @@ const AddDeliveryPartner = () => {
                     )}
                   </div>
                 </td>
-                <td style={{ border: "none" }}>#101</td>
+                <td style={{ border: "none" }}>
+                <Icon
+                    icon="carbon:overflow-menu-vertical"
+                    width="1.2rem"
+                    height="1.2rem"
+                    style={{ color: "gray", cursor: "pointer" }}
+                  />
+                </td>
               </tr>
+
+              ))}
             </tbody>
           </Table>
         </div>

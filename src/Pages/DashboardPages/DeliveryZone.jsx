@@ -7,13 +7,16 @@ import { fetchApiData, getDateFromISOString } from "../../utiils";
 
 const DeliveryZone = () => {
   const [isAssigned, setIsAssigned] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState("");
   const [zone, setZone] = useState([])
   const navigate = useNavigate();
-  async function getZones() {
+
+  async function getZones(search="" , assignProfile="") {
     const data = await fetchApiData(
-      "https://muvit-project.vercel.app/api/v1/admin/delivery-zones"
+      `https://muvit-project.vercel.app/api/v1/admin/searchDeliveryZone?search=${search}&assignProfile=${assignProfile}`
     );
-    setZone(data?.data);
+    setZone(data?.data?.docs);
   }
 
   useEffect(()=>{
@@ -65,14 +68,22 @@ const DeliveryZone = () => {
               <Form.Control
                 type="text"
                 placeholder="Search by Date, ID or Order"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  getZones(e.target.value);
+                }}
               />
             </span>
             <span>
-              <Form.Select>
-                <option value="">Filter</option>
-                <option value={"driver"}>Driver</option>
-                <option value={"helper"}>Helper</option>
-                <option value={"both"}>Helper and Delivery</option>
+              <Form.Select  onChange={(e) =>{
+                getZones("", e.target.value);
+                 setFilter(e?.target?.value)
+                 }}>
+                <option value="" disabled selected>Filter</option>
+                <option value="PARTNER">Driver</option>
+                <option value="HELPER">Helper</option>
+                <option value="COURIER">Helper and Delivery</option>
               </Form.Select>
             </span>
           </span>

@@ -8,13 +8,14 @@ import { fetchApiData } from "../../utiils";
 const TotalUser = () => {
   const [isAssigned, setIsAssigned] = useState(true);
   const [allUsers, setAllUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  async function getUsers() {
+  async function getUsers(search="" ,userType="" ) {
     const data = await fetchApiData(
-      "https://muvit-project.vercel.app/api/v1/admin/profile?userType=USER"
+      `https://muvit-project.vercel.app/api/v1/admin/searchUser?search=${search}&userType=${userType}`
     );
-    setAllUsers(data?.data);
+    setAllUsers(data?.data?.docs);
   }
  console.log(allUsers)
 
@@ -59,14 +60,26 @@ const TotalUser = () => {
               <Form.Control
                 type="text"
                 placeholder="Search by Date, ID or Order"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  getUsers(e.target.value);
+                }}
               />
             </span>
             <span>
-              <Form.Select>
-                <option value="">Filter</option>
-                <option value={"driver"}>Driver</option>
-                <option value={"helper"}>Helper</option>
-                <option value={"both"}>Helper and Delivery</option>
+              <Form.Select onChange={(e) =>{
+                getUsers("", e.target.value);
+                
+                 }}>
+                <option value="" selected>ALL</option>
+                <option value="ADMIN">ADMIN</option>
+                <option value="SUB-ADMIN">SUB-ADMIN</option>
+                <option value="USER">USER</option>
+                <option value="PARTNER">PARTNER</option>
+                <option value="PARTNER">HELPER</option>
+                <option value="COURIER">COURIER</option>
+               
               </Form.Select>
             </span>
           </span>
@@ -120,7 +133,7 @@ const TotalUser = () => {
                     border: "none",
                   }}
                 >
-                  Connected on
+                  User Type
                 </th>
                 <th
                   style={{
@@ -147,17 +160,17 @@ const TotalUser = () => {
             <tbody >
               {allUsers?.map((item , i)=>(
               <tr style={{ border: "none" }} key={i}>
-                <td style={{ border: "none" }}>{item?.user?.userId}</td>
-                <td style={{ border: "none" }}>{item?.user?.fullName}</td>
-                <td style={{ border: "none" }}>{item?.user?.email}</td>
-                <td style={{ border: "none" }}>{item?.user?.mobileNumber}</td>
-                <td style={{ border: "none" }}>{item?.memberSince}</td>
+                <td style={{ border: "none" }}>{item?.userId}</td>
+                <td style={{ border: "none" }}>{item?.fullName}</td>
+                <td style={{ border: "none" }}>{item?.email}</td>
+                <td style={{ border: "none" }}>{item?.mobileNumber}</td>
+                <td style={{ border: "none" }}>{item?.userType}</td>
                 <td
                    style={{ border: "none" }}   
                 >
-                  <div className={item?.user?.status ? "complete-booking" : "pending-booking"}
+                  <div className={item?.status ? "complete-booking" : "pending-booking"}
                       style={{textAlign:"center" }}>
-                {item?.user?.status ? "Active" : "Inactive"} 
+                {item?.status ? "Active" : "Inactive"} 
 
                   </div>
                 </td>

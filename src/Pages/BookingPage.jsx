@@ -19,6 +19,7 @@ const BookingPage = () => {
   const [coordinates, setCoordinates] = useState(null);
   const [coordinates1, setCoordinates1] = useState(null);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const [assignRole , setAssignRole] = useState({
     role:"PARTNER",
     partnerId:"",
@@ -68,12 +69,12 @@ useEffect(() => {
   }
   console.log(allUsers);
 
-  async function getBooking() {
+  async function getBookingFilter(search="", role="") {
     const data = await fetchApiData(
-      "https://muvit-project.vercel.app/api/v1/admin/bookings"
+      `https://muvit-project.vercel.app/api/v1/admin/searchBooking?search=${search}&role=${role}`
     );
-    setAllBooking(data?.data?.filter((d)=> d?.status !== "PENDING"));
-    setAllUnAssignBooking(data?.data?.filter((d)=> d?.status === "PENDING"));
+    setAllBooking(data?.data?.docs?.filter((d)=> d?.status !== "PENDING"));
+    setAllUnAssignBooking(data?.data?.docs?.filter((d)=> d?.status === "PENDING"));
   }
 
 useEffect(()=>{
@@ -81,7 +82,7 @@ useEffect(()=>{
 },[assignRole.role])
 
   useEffect(() => {
-    getBooking();
+    getBookingFilter();
   
   }, []);
 
@@ -163,7 +164,7 @@ useEffect(()=>{
                 style={{ color: "#202224", fontWeight: "bold" }}
               />
             </span>
-            <span>Driver Bookings</span>
+            <span>{filter === "driver" ? "Driver Bookings" : filter ==="helper" ? "Helper Bookings" : filter ==="helper" ? "Helper & Delivery Bookings" :"Bookings" }</span>
           </span>
           <span style={{ display: "flex", gap: "1rem" }}>
             <span>
@@ -185,13 +186,22 @@ useEffect(()=>{
               <Form.Control
                 type="text"
                 placeholder="Search by Date, ID or Order"
+                value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              getBookingFilter(e.target.value);
+            }}
               />
             </span>
             <span>
-              <Form.Select onChange={(e) => setFilter(e?.target?.value)}>
-                <option value={"driver"}>Driver</option>
-                <option value={"helper"}>Helper</option>
-                <option value={"both"}>Helper and Delivery</option>
+              <Form.Select onChange={(e) =>{
+                getBookingFilter("", e.target.value);
+                 setFilter(e?.target?.value)
+                 }}>
+                <option disabled selected>Choose Category</option>
+                <option value="driver">Driver</option>
+                <option value="helper">Helper</option>
+                <option value="helper">Helper and Delivery</option>
               </Form.Select>
             </span>
           </span>
@@ -228,7 +238,7 @@ useEffect(()=>{
                       border: "none",
                     }}
                   >
-                    {filter === "helper" ? "Service Type" : "Vehicle Type"}
+                    {filter === "HELPER" ? "Service Type" : "Vehicle Type"}
                   </th>
                   <th
                     style={{

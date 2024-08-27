@@ -13,15 +13,16 @@ const Dashboard = () => {
   const [allBooking, setAllBooking] = useState([]);
   const [processedBooking, setProcessedBooking] = useState([]);
   const [pendingBooking, setPendingBooking] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
-  async function getBooking() {
+  async function getBooking(search="", role="") {
     const data = await fetchApiData(
-      "https://muvit-project.vercel.app/api/v1/admin/bookings"
+      `https://muvit-project.vercel.app/api/v1/admin/searchBooking?search=${search}&role=${role}`
     );
-    setAllBooking(data?.data);
-    setProcessedBooking(data?.data?.filter((d)=> d?.status === "COMPLETED"));
-    setPendingBooking(data?.data?.filter((d)=> d?.status === "PENDING"));
+    setAllBooking(data?.data?.docs);
+    setProcessedBooking(data?.data?.docs?.filter((d)=> d?.status === "COMPLETED"));
+    setPendingBooking(data?.data?.docs?.filter((d)=> d?.status === "PENDING"));
     
   }
 
@@ -29,9 +30,9 @@ const Dashboard = () => {
 
   async function getUsers() {
     const data = await fetchApiData(
-      "https://muvit-project.vercel.app/api/v1/admin/profile?userType=USER"
+      "https://muvit-project.vercel.app/api/v1/admin/searchUser"
     );
-    setUser(data?.data);
+    setUser(data?.data?.docs);
   }
 
     
@@ -285,14 +286,21 @@ const Dashboard = () => {
                   <Form.Control
                     type="text"
                     placeholder="Search by Date, ID or Order"
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                      getBooking(e.target.value);
+                    }}
                   />
                 </span>
                 <span>
-                  <Form.Select>
-                    <option>Filter</option>
-                    <option value="1">Yesterday</option>
-                    <option value="2">Last 7 days</option>
-                    <option value="3">Last 30 days</option>
+                  <Form.Select onChange={(e) =>{
+                getBooking("", e.target.value);
+            
+                 }}>
+                  <option disabled selected>Choose Category</option>
+                <option value="driver">Driver</option>
+                <option value="helper">Helper</option>
+                <option value="helper">Helper and Delivery</option>
                   </Form.Select>
                 </span>
               </span>

@@ -9,6 +9,7 @@ const AdminProfile = () => {
   const navigate = useNavigate();
   const [profile , setProfile] =  useState()
   const [allBooking, setAllBooking] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const { pathname } = useLocation();
   async function getProfile() {
     const data = await fetchApiData(
@@ -17,11 +18,11 @@ const AdminProfile = () => {
     setProfile(data?.data);
   }
 
-  async function getBooking() {
+  async function getBooking(search="", role="") {
     const data = await fetchApiData(
-      "https://muvit-project.vercel.app/api/v1/admin/bookings"
+      `https://muvit-project.vercel.app/api/v1/admin/searchBooking?search=${search}&role=${role}`
     );
-    setAllBooking(data?.data);
+    setAllBooking(data?.data?.docs);
   }
   useEffect(()=>{
     getProfile()
@@ -172,15 +173,21 @@ const AdminProfile = () => {
                       <Form.Control
                         type="text"
                         placeholder="Search by Date, ID or Order"
+                        onChange={(e) => {
+                          setSearchTerm(e.target.value);
+                          getBooking(e.target.value);
+                        }}
                       />
                     </span>
                     <span>
-                      <Form.Select>
-                        <option>Filter</option>
-                        <option value="1">Yesterday</option>
-                        <option value="2">Last 7 days</option>
-                        <option value="3">Last 30 days</option>
-                      </Form.Select>
+                    <Form.Select onChange={(e) =>{
+                getBooking("", e.target.value);
+                 }}>
+                <option disabled selected>Choose Category</option>
+                <option value="driver">Driver</option>
+                <option value="helper">Helper</option>
+                <option value="helper">Helper and Delivery</option>
+              </Form.Select>
                     </span>
                   </span>
                 </div>
@@ -266,13 +273,11 @@ const AdminProfile = () => {
                         <td style={{ border: "none" }}>#101</td>
                         <td style={{ border: "none" }}>
                           <span
-                            style={{
-                              color: "#4D4E50",
-                              backgroundColor: "#F1F4F9",
-                              borderRadius: "9px",
-                              padding: "5px 10px",
-                              border: "none",
-                            }}
+                            className={
+                              data?.paymentStatus === "PAID"
+                                ? "complete-booking"
+                                : "pending-booking"
+                            }
                           >
                             {data?.paymentStatus}
                           </span>

@@ -7,15 +7,16 @@ import { fetchApiData, getDateFromISOString, updateApiData } from "../../utiils"
 const AddDeliveryPartner = () => {
   const [isAssigned, setIsAssigned] = useState(true);
   const [isPaid, setIsPaid] = useState(false);
-  const [filter, setFilter] = useState("driver");
+  const [filter, setFilter] = useState("");
   const [allRefund, setAllRefund] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
     
-  async function getUsers() {
+  async function getUsers(search="" , role="") {
     const data = await fetchApiData(
-      "https://muvit-project.vercel.app/api/v1/admin/booking/getAllRefundData/by-type/BOOKING"
+      `https://muvit-project.vercel.app/api/v1/admin/searchRefunds?search=${search}&role=${role}&refundType=BOOKING`
     );
-    setAllRefund(data?.data?.filter((d)=> d?.user?.currentRole === "PARTNER"));
+    setAllRefund(data?.data?.docs);
   }
  console.log(allRefund)
 
@@ -57,9 +58,9 @@ const AddDeliveryPartner = () => {
               />
             </span>
             <span>
-              {filter === "driver"
+              {filter === "PARTNER"
                 ? "Driver"
-                : filter === "helper"
+                : filter === "HELPER"
                 ? "Helper"
                 : "Helper & Delivery"}{" "}
               Payout
@@ -71,13 +72,22 @@ const AddDeliveryPartner = () => {
               <Form.Control
                 type="text"
                 placeholder="Search by Date, ID or Order"
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  getUsers(e.target.value);
+                }}
               />
             </span>
             <span>
-              <Form.Select onChange={(e) => setFilter(e.target.value)}>
-                <option value={"driver"}>Driver</option>
-                <option value={"helper"}>Helper</option>
-                <option value={"both"}>Helper and Delivery</option>
+            <Form.Select onChange={(e) =>{
+              setFilter(e.target.value)
+              getUsers("", e.target.value);
+                 }}>
+                <option disabled selected>Choose Category</option>
+                <option value="USER">USER</option>
+                <option value="PARTNER">Driver</option>
+                <option value="HELPER">Helper</option>
+                <option value="COURIER">Helper and Delivery</option>
               </Form.Select>
             </span>
           </span>

@@ -210,7 +210,7 @@ const AddDeliveryPartner = () => {
                       justifyContent: "center",
                     }}
                   >
-                    {!item?.refundStatus === "COMPLETED" ? (
+                    {item?.refundStatus !== "COMPLETED" ? (
                       <>
                         <Button
                           style={{

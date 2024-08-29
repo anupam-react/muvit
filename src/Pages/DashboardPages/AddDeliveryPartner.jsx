@@ -29,7 +29,7 @@ const AddDeliveryPartner = () => {
       `https://muvit-project.vercel.app/api/v1/admin/bookings/updatePaymentStatus/${id}`,
       formData
     );
-
+    getUsers()
     console.log(response);
 
   } catch (error) {

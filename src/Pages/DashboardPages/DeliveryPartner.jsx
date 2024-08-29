@@ -1,22 +1,22 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button, Form, Table } from "react-bootstrap";
 import { useState } from "react";
-import HOC from "../../Components/MainComponents/HOC";
 import { useNavigate } from "react-router-dom";
-import { fetchApiData } from "../../utiils";
+import { fetchApiData, getDateFromISOString } from "../../utiils";
 import { useEffect } from "react";
 
 const DeliveryPartner = () => {
   const [isAssigned, setIsAssigned] = useState(true);
   const [allUsers, setAllUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   
-  async function getUsers() {
+  async function getUsers(search="" , userType="PARTNER") {
     const data = await fetchApiData(
-      "https://muvit-project.vercel.app/api/v1/admin/profile?userType=PARTNER"
+      `https://muvit-project.vercel.app/api/v1/admin/searchUser?search=${search}&userType=${userType}`
     );
-    setAllUsers(data?.data);
+    setAllUsers(data?.data?.docs);
   }
  console.log(allUsers)
 
@@ -69,14 +69,22 @@ const DeliveryPartner = () => {
               <Form.Control
                 type="text"
                 placeholder="Search by Date, ID or Order"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  getUsers(e.target.value);
+                }}
               />
             </span>
             <span>
-              <Form.Select>
+              <Form.Select onChange={(e) =>{
+                getUsers("", e.target.value);
+                
+                 }}>
                 <option value="">Filter</option>
-                <option value={"driver"}>Driver</option>
-                <option value={"helper"}>Helper</option>
-                <option value={"both"}>Helper and Delivery</option>
+                <option value="PARTNER">Driver</option>
+                <option value="PARTNER">Helper</option>
+                <option value="COURIER">Helper & Delivery</option>
               </Form.Select>
             </span>
           </span>
@@ -166,16 +174,16 @@ const DeliveryPartner = () => {
             <tbody>
             {allUsers?.map((item , i)=>(
               <tr style={{ border: "none" }} key={i}>
-                <td style={{ border: "none" }}>{item?.user?.userId}</td>
-                <td style={{ border: "none" }}>{item?.user?.currentRole}</td>
-                <td style={{ border: "none" }}>{item?.user?.fullName}</td>
-                <td style={{ border: "none" }}>{item?.user?.email}</td>
-                <td style={{ border: "none" }}>{item?.user?.mobileNumber}</td>
-                <td style={{ border: "none" }}>{item?.memberSince}</td>
+                <td style={{ border: "none" }}>{item?.userId}</td>
+                <td style={{ border: "none" }}>{item?.currentRole}</td>
+                <td style={{ border: "none" }}>{item?.fullName}</td>
+                <td style={{ border: "none" }}>{item?.email}</td>
+                <td style={{ border: "none" }}>{item?.mobileNumber}</td>
+                <td style={{ border: "none" }}>{getDateFromISOString(item?.createdAt)}</td>
                 <td
                    style={{ border: "none" }}   
                 >
-                  <div className={item?.user?.status ? "complete-booking" : "pending-booking"}
+                  <div className={item?.status ? "complete-booking" : "pending-booking"}
                       style={{textAlign:"center" }}>
                 {item?.user?.status ? "Active" : "Inactive"} 
 

@@ -1,11 +1,11 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button, Form, Table } from "react-bootstrap";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
-import { createApiData } from "../../utiils";
+import { useNavigate, useParams } from "react-router-dom";
+import { createApiData, fetchApiData, updateApiData } from "../../utiils";
 
-const AddVehicleType = () => {
+const UpdateVehicleType = () => {
   const [vechicle, setVehicle] = useState({
     name: "",
     image: "",
@@ -22,6 +22,7 @@ const AddVehicleType = () => {
   const fileInputRef = useRef(null);
   const fileInputRef1 = useRef(null);
   const navigate = useNavigate();
+  const {id} = useParams()
   console.log(bannerImage);
 
   const handleChange = (e) => {
@@ -42,6 +43,18 @@ const AddVehicleType = () => {
     }
   };
 
+  async function getSingleType() {
+    const data = await fetchApiData(
+      `https://muvit-project.vercel.app/api/v1/admin/VechileType/${id}`
+    );
+    setVehicle(data?.data);
+  }
+ console.log()
+
+  useEffect(()=>{
+    getSingleType()
+  },[id])
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -57,8 +70,8 @@ const AddVehicleType = () => {
     data.append("status", true);
 
     try {
-      const response = await createApiData(
-        "https://muvit-project.vercel.app/api/v1/admin/VechileType",
+      const response = await updateApiData(
+        `https://muvit-project.vercel.app/api/v1/admin/VechileType/${vechicle?._id}`,
         data
       );
       console.log(response);
@@ -187,7 +200,7 @@ const AddVehicleType = () => {
                 </Form.Group>
 
                 <div className="bannerBtn">
-                  <Button type="submit">Add vehicle</Button>
+                  <Button type="submit">Update vehicle</Button>
                 </div>
               </Form>
             </div>
@@ -208,7 +221,7 @@ const AddVehicleType = () => {
                   style={{ color: "#202224", fontWeight: "bold" }}
                 />
               </span>
-              <span style={{ color: "#A6A7A7" }}>Add Vehicle Type</span>
+              <span style={{ color: "#A6A7A7" }}>Update Vehicle Type</span>
             </span>
           </div>
           <div></div>{" "}
@@ -251,9 +264,9 @@ const AddVehicleType = () => {
                       style={{ display: "none" }}
                       onChange={handleImageUpload}
                     />
-                    {bannerImage ? (
+                    {bannerImage || vechicle?.vechileImage ? (
                       <img
-                        src={bannerImage}
+                        src={bannerImage || vechicle?.image}
                         alt="Banner Preview"
                         className="banner-preview"
                       />
@@ -284,9 +297,9 @@ const AddVehicleType = () => {
                       style={{ display: "none" }}
                       onChange={handleImageUpload1}
                     />
-                    {bannerImage1 ? (
+                    {bannerImage1 || vechicle?.vechileImage ? (
                       <img
-                        src={bannerImage1}
+                        src={bannerImage1 || vechicle?.vechileImage}
                         alt="Banner Preview"
                         className="banner-preview"
                       />
@@ -318,4 +331,4 @@ const AddVehicleType = () => {
   );
 };
 
-export default AddVehicleType;
+export default UpdateVehicleType;

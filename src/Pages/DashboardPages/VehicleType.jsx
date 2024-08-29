@@ -3,18 +3,24 @@ import { Button, Form, Table } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import HOC from "../../Components/MainComponents/HOC";
 import { useNavigate } from "react-router-dom";
-import { fetchApiData } from "../../utiils";
+import { deleteApiData, fetchApiData } from "../../utiils";
 
 const VehicleType = () => {
   const [isAssigned, setIsAssigned] = useState(true);
   const [allTypes, setAllTypes] = useState([]);
   const navigate = useNavigate();
 
-  async function getType() {
+  async function getType(search="") {
     const data = await fetchApiData(
-      "https://muvit-project.vercel.app/api/v1/admin/VechileType"
+      `https://muvit-project.vercel.app/api/v1/admin/searchVechile?search=${search}`
     );
-    setAllTypes(data?.data);
+    setAllTypes(data?.data?.docs);
+  }
+  async function handleDeleteType(id) {
+    const data = await deleteApiData(
+      `https://muvit-project.vercel.app/api/v1/admin/VechileType/${id}`
+    );
+    getType()
   }
  console.log(allTypes)
 
@@ -101,15 +107,7 @@ const VehicleType = () => {
                 >
                   Vehicle ID
                 </th>
-                <th
-                  style={{
-                    backgroundColor: "#F1F4F9",
-                    color: "#202224",
-                    border: "none",
-                  }}
-                >
-                  Milage
-                </th>
+               
                 <th
                   style={{
                     backgroundColor: "#F1F4F9",
@@ -137,32 +135,20 @@ const VehicleType = () => {
               <tr style={{ border: "none", padding: "1rem 0" }}>
                 <td style={{ border: "none" }}>#{i+1}</td>
                 <td style={{ border: "none" }}>{item?.name}</td>
-                <td style={{ border: "none" }}>{item?.id}</td>
-                <td style={{ border: "none" }}>#101</td>
+                <td style={{ border: "none" }}>{item?.vechileId}</td>
+          
                 <td
-                 style={{
-
-                  border: "none",
-         
-                }}
+                   style={{ border: "none" }}   
                 >
-                  <div  style={{
-                    backgroundColor: "#00B69B",
-                    color: "white",
-                    padding:"10px 5px",
-                    borderRadius: "9px",
-                  }}>
-                  Done
+                  <div className={item?.status ? "complete-booking" : "pending-booking"}
+                      style={{textAlign:"center" }}>
+                {item?.status ? "Done" : "Not Done"} 
 
                   </div>
                 </td>
                 <td style={{ border: "none" }}>
-                  <Icon
-                    icon="carbon:overflow-menu-vertical"
-                    width="1.2rem"
-                    height="1.2rem"
-                    style={{ color: "gray", cursor: "pointer" }}
-                  />
+                 <button onClick={()=> navigate(`/dashboard/update-vehicle-type/${item?._id}`)} style={{backgroundColor:"#FEBF05" , marginRight:"20px", border:"none", color:"white", padding:"5px 10px",  borderRadius:"5px"}}>Update</button>
+                 <button onClick={()=> handleDeleteType(item?._id)} style={{backgroundColor:"red" , border:"none", color:"white", padding:"5px 10px",  borderRadius:"5px"}}>Delete</button>
                 </td>
               </tr>
 

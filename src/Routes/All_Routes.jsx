@@ -18,6 +18,12 @@ import Settings from "../Pages/Settings";
 import BookingDetaills from "../Pages/BookingDetaills";
 import PrivateRoutes from "../utiils/PrivateRoutes";
 import RegisterPage from "../Pages/RegisterPage";
+import UpdateVehicleType from "../Pages/DashboardPages/UpdateVehicleType";
+import AddBanner from "../Pages/AddBanner";
+import AddCoupon from "../Pages/AddCoupon";
+import UpdateCoupon from "../Pages/UpdateCoupon";
+import UpdateBanner from "../Pages/UpdateBanner";
+import PendingVerificationUser from "../Pages/DashboardPages/PendingVerificationUser";
 
 const All_Routes = () => {
   return (
@@ -35,6 +41,10 @@ const All_Routes = () => {
       <Route path="/booking" element={<BookingPage />} />
       <Route path="/booking/:id" element={<BookingDetaills />} />
       <Route path="/promotions" element={<PromotionPage />} />
+      <Route path="/promotions/add-banner" element={<AddBanner />} />
+      <Route path="/promotions/update-banner/:id" element={<UpdateBanner />} />
+      <Route path="/promotions/add-coupon" element={<AddCoupon />} />
+      <Route path="/promotions/update-coupon/:id" element={<UpdateCoupon />} />
       <Route path="/setting/privacy-policy" element={<Settings />} />
       <Route path="/setting/contact-us" element={<Settings />} />
       <Route path="/setting/admin" element={<AdminProfile />} />
@@ -48,7 +58,9 @@ const All_Routes = () => {
       <Route path="/dashboard/add-partner" element={<AddDeliveryPartner />} />
       <Route path="/dashboard/vehicle-type" element={<VehicleType />} />
       <Route path="/dashboard/add-vehicle-type" element={<AddVehicleType />} />
+      <Route path="/dashboard/update-vehicle-type/:id" element={<UpdateVehicleType />} />
       <Route path="/dashboard/total-user" element={<TotalUser />} />
+      <Route path="/dashboard/verify-user" element={<PendingVerificationUser />} />
       <Route path="/admin-profile" element={<AdminProfile />} />
        </Route>
 

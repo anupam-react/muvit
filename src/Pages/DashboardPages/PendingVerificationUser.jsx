@@ -1,33 +1,42 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Form, Table } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import HOC from "../../Components/MainComponents/HOC";
 import { useNavigate } from "react-router-dom";
-import { deleteApiData, fetchApiData } from "../../utiils";
+import { fetchApiData, updateApiData } from "../../utiils";
+import { successToast } from "../../Components/Toast";
 
-const TotalUser = () => {
+const PendingVerificationUser = () => {
   const [allUsers, setAllUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   async function getUsers(search = "", userType = "") {
     const data = await fetchApiData(
-      `https://muvit-project.vercel.app/api/v1/admin/searchUser?search=${search}&userType=${userType}`
+      `https://muvit-project.vercel.app/api/v1/admin/users/pending-verification`
     );
-    setAllUsers(data?.data?.docs);
+    setAllUsers(data?.data);
   }
-
-  async function handleDeleteType(id) {
-    const data = await deleteApiData(
-      `https://muvit-project.vercel.app/api/v1/admin/users/profile/delete/${id}`
-    );
-    getUsers();
-  }
-  console.log(allUsers);
 
   useEffect(() => {
     getUsers();
   }, []);
+
+  const handleSubmit = async (id) => {
+  
+    try {
+      const response = await updateApiData(
+        `https://muvit-project.vercel.app/api/v1/admin/users/${id}/update-verification-status`,
+        {isVerified: true}
+      );
+      console.log(response);
+      getUsers()
+     successToast("Verification SuccessFully")
+
+    } catch (error) {
+      console.log(error);
+    }
+    // Handle form submission logic here
+  };
+
   return (
     <div>
       {" "}
@@ -35,7 +44,7 @@ const TotalUser = () => {
         <div className="dashboard_container_split_totals2">
           <span style={{ display: "flex", gap: ".5rem", fontSize: "2rem" }}>
             <span
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/dashboard/total-user")}
               style={{ cursor: "pointer" }}
             >
               <Icon
@@ -45,45 +54,9 @@ const TotalUser = () => {
                 style={{ color: "#202224", fontWeight: "bold" }}
               />
             </span>
-            <span>Total Users</span>
+            <span>Pending Verification Users</span>
           </span>
-          <span style={{ display: "flex", gap: "1rem" }}>
-            <button  onClick={()=> navigate('/dashboard/verify-user')} style={{
-                  backgroundColor:  "#00B69B",
-                  color: "#FFFF",
-                  border: "none",
-                  padding:"5px 10px",
-                  borderRadius:"6px"
-                }}>Verify User</button>
-            <span>
-              <Form.Control
-                type="text"
-                placeholder="Search by Date, ID or Order"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  getUsers(e.target.value);
-                }}
-              />
-            </span>
-            <span>
-              <Form.Select
-                onChange={(e) => {
-                  getUsers("", e.target.value);
-                }}
-              >
-                <option value="" selected>
-                  ALL
-                </option>
-                <option value="ADMIN">ADMIN</option>
-                <option value="SUB-ADMIN">SUB-ADMIN</option>
-                <option value="USER">USER</option>
-                <option value="PARTNER">PARTNER</option>
-                <option value="PARTNER">HELPER</option>
-                <option value="COURIER">COURIER</option>
-              </Form.Select>
-            </span>
-          </span>
+       
         </div>
         <div></div>
         <div className="mt-3" style={{ height: "70vh", overflowY: "scroll" }}>
@@ -136,15 +109,7 @@ const TotalUser = () => {
                 >
                   User Type
                 </th>
-                <th
-                  style={{
-                    backgroundColor: "#F1F4F9",
-                    color: "#202224",
-                    border: "none",
-                  }}
-                >
-                  Verification
-                </th>
+               
 
                 <th
                   style={{
@@ -166,19 +131,10 @@ const TotalUser = () => {
                   <td style={{ border: "none" }}>{item?.email}</td>
                   <td style={{ border: "none" }}>{item?.mobileNumber}</td>
                   <td style={{ border: "none" }}>{item?.userType}</td>
-                  <td style={{ border: "none" }}>
-                    <div
-                      className={
-                        item?.isVerified ? "complete-booking" : "pending-booking"
-                      }
-                      style={{ textAlign: "center" }}
-                    >
-                      {item?.isVerified ? "Approve" : "Pending"}
-                    </div>
-                  </td>
+                
                   <td style={{ border: "none" }}>
                     <button
-                      onClick={() => handleDeleteType(item?._id)}
+                      onClick={() => handleSubmit(item?._id)}
                       style={{
                         backgroundColor: "red",
                         border: "none",
@@ -187,7 +143,7 @@ const TotalUser = () => {
                         borderRadius: "5px",
                       }}
                     >
-                      Delete
+                      Verification
                     </button>
                   </td>
                 </tr>
@@ -200,4 +156,4 @@ const TotalUser = () => {
   );
 };
 
-export default TotalUser;
+export default PendingVerificationUser;

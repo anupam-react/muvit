@@ -10,6 +10,7 @@ const Dashboard = () => {
   const [partner, setPartner] = useState([])
   const [type, setType] = useState([])
   const [zone, setZone] = useState([])
+  const [price, setPrice] = useState([])
   const [allBooking, setAllBooking] = useState([]);
   const [processedBooking, setProcessedBooking] = useState([]);
   const [pendingBooking, setPendingBooking] = useState([]);
@@ -25,9 +26,6 @@ const Dashboard = () => {
     setPendingBooking(data?.data?.docs?.filter((d)=> d?.status === "PENDING"));
     
   }
-
-
-
   async function getUsers() {
     const data = await fetchApiData(
       "https://muvit-project.vercel.app/api/v1/admin/searchUser"
@@ -55,6 +53,12 @@ const Dashboard = () => {
     );
     setZone(data?.data);
   }
+  async function getAllVechilePrices() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/vechile-price"
+    );
+    setPrice(data?.data);
+  }
 
   useEffect(()=>{
     getBooking()
@@ -62,6 +66,7 @@ const Dashboard = () => {
     getPartner()
     getType()
     getZones()
+    getAllVechilePrices()
   },[])
 
   return (
@@ -216,6 +221,45 @@ const Dashboard = () => {
                 />
               </div>
             </div>
+            <div
+              onClick={() => navigate("/dashboard/vehicle-type")}
+              className="dashboard_container_split_totals1"
+            >
+              <div
+                style={{
+                  borderRight: "1px solid gray",
+                  paddingRight: "1rem",
+                }}
+              >
+                <div className="dashboard_container_split_totals">
+                  <span>
+                    <p>Vehicle Price</p>
+                    <p>{price?.length}</p>
+                  </span>
+                  <span>
+                    <img
+                      className="dashboard_container_split_totals_image"
+                      src="/Images/Dashboard/vehicle.png"
+                      alt="Delivery"
+                    />
+                  </span>
+                </div>
+                <div>
+                  <p>
+                    
+                    
+                  </p>
+                </div>
+              </div>
+              <div>
+                <Icon
+                  icon="iconoir:nav-arrow-right"
+                  width="1.2rem"
+                  height="1.2rem"
+                  style={{ color: "black" }}
+                />
+              </div>
+            </div>
 
             <div
               onClick={() => navigate("/dashboard/total-user")}
@@ -319,14 +363,14 @@ const Dashboard = () => {
                     <ProgressBar
                       className="progress-bar-custom1"
                       variant="success"
-                      now={Math.round(pendingBooking?.length/ allBooking?.length)*100}
+                      now={Math.round((pendingBooking?.length/ allBooking?.length)*100)}
                     />
 
                     <p>Pending ({pendingBooking?.length} out of {allBooking?.length})</p>
                   </div>
                 </div>
                 <div>
-                  <p className="dashboard_container_split_totals5_text">{Math.round(pendingBooking?.length/ allBooking?.length)*100}%</p>
+                  <p className="dashboard_container_split_totals5_text">{Math.round((pendingBooking?.length/ allBooking?.length)*100)}%</p>
                 </div>
               </div>
               <div className="dashboard_container_split_totals3121">
@@ -342,14 +386,14 @@ const Dashboard = () => {
                     <ProgressBar
                       className="progress-bar-custom"
                       variant="success"
-                      now={Math.round(processedBooking?.length/ allBooking?.length)*100}
+                      now={Math.round((processedBooking?.length/ allBooking?.length)*100)}
                     />
 
                     <p>Processed ({processedBooking?.length} out of {allBooking?.length})</p>
                   </div>
                 </div>
                 <div>
-                  <p className="dashboard_container_split_totals5_text">{Math.round(processedBooking?.length/ allBooking?.length)*100}%</p>
+                  <p className="dashboard_container_split_totals5_text">{Math.round((processedBooking?.length/ allBooking?.length)*100)}%</p>
                 </div>
               </div>
             </div>

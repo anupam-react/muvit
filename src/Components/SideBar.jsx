@@ -61,6 +61,66 @@ return (
             <span>Booking</span>
           </span>
         </div>
+        <div
+          style={{
+            color: path === "/notification" ? "#197bbd" : "#C7C7C7",
+            backgroundColor: path === "/notification" ? "#f0f7ff" : "#FFFF",
+          }}
+          className="sidebar_item"
+          onClick={() => navigate("/notification")}
+        >
+          <span>
+            <span>
+              <Icon className="icon_dashboard" icon="f7:menu" />
+            </span>
+            <span>Push Notification</span>
+          </span>
+        </div>
+        <div
+          style={{
+            color: path === "/faq" ? "#197bbd" : "#C7C7C7",
+            backgroundColor: path === "/faq" ? "#f0f7ff" : "#FFFF",
+          }}
+          className="sidebar_item"
+          onClick={() => navigate("/faq")}
+        >
+          <span>
+            <span>
+              <Icon className="icon_dashboard" icon="f7:menu" />
+            </span>
+            <span>FAQ</span>
+          </span>
+        </div>
+        <div
+          style={{
+            color: path === "/transaction" ? "#197bbd" : "#C7C7C7",
+            backgroundColor: path === "/transaction" ? "#f0f7ff" : "#FFFF",
+          }}
+          className="sidebar_item"
+          onClick={() => navigate("/transaction")}
+        >
+          <span>
+            <span>
+              <Icon className="icon_dashboard" icon="f7:menu" />
+            </span>
+            <span>Transaction</span>
+          </span>
+        </div>
+        <div
+          style={{
+            color: path === "/subadmin" ? "#197bbd" : "#C7C7C7",
+            backgroundColor: path === "/subadmin" ? "#f0f7ff" : "#FFFF",
+          }}
+          className="sidebar_item"
+          onClick={() => navigate("/subadmin")}
+        >
+          <span>
+            <span>
+              <Icon className="icon_dashboard" icon="f7:menu" />
+            </span>
+            <span>Sub-Admin</span>
+          </span>
+        </div>
 
         <div
           style={{

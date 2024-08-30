@@ -16,7 +16,9 @@ const Settings = () => {
   })
 
   const [policyHeader , setPolicyHeader] = useState("")
+  const [legalContent , setLegalContent] = useState("")
   const [policy , setPolicy] = useState({})
+  const [legal , setLegal] = useState({})
 
 
   const navigate = useNavigate();
@@ -45,11 +47,18 @@ const Settings = () => {
     );
     setPolicy(data?.data[0]);
   }
+  async function getLegal() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/Legal"
+    );
+    setLegal(data?.data[0]);
+  }
 
 
   useEffect(()=>{
     getContact()
     getPolicy()
+    getLegal()
   },[])
 
   const handleContact = async (e) => {
@@ -111,6 +120,33 @@ const Settings = () => {
     }
   };
 
+  const handleLegal = async (e) => {
+    e.preventDefault();
+
+    const formData = {
+      content:  legalContent || legal?.header 
+    };
+    try {
+      if(!legal?._id){
+        const response = await createApiData(
+          "https://muvit-project.vercel.app/api/v1/admin/Legal",
+          formData
+        )
+        console.log(response);
+      }
+        else{
+          await updateApiData(
+            `https://muvit-project.vercel.app/api/v1/admin/Legal/${legal?._id}`,
+            formData
+          );
+        }
+     
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <div className="admin-profile">
@@ -141,6 +177,18 @@ const Settings = () => {
             }}
           >
             Contact Us
+          </p>
+          <p
+            onClick={() => navigate("/setting/legal")}
+            style={{
+              color: pathname === "/setting/legal" ? "white" : "#202224",
+              padding: pathname === "/setting/legal" ? "1rem 2rem" : "0",
+              backgroundColor:
+                pathname === "/setting/legal" ? "#FEBF05" : "white",
+              borderRadius: pathname === "/setting/legal" ? "10px" : "0",
+            }}
+          >
+            Legal
           </p>
           <p
             onClick={() => navigate("/setting/admin")}
@@ -290,6 +338,50 @@ const Settings = () => {
                   </Form>
                 </div>
               </div>
+            </div>
+          ) : pathname === "/setting/legal" ? (
+            <div>
+              <div>
+                <p
+                  style={{
+                    fontSize: "2rem",
+                    fontWeight: "bold",
+                    color: "#202224",
+                  }}
+                >
+                  Legal
+                  <span>
+                    <Icon
+                      icon="material-symbols-light:edit-outline"
+                      width="1.2rem"
+                      height="1.2rem"
+                      style={{ color: "gray", cursor: "pointer" }}
+                      onClick={() => setIsEdit(!isEdit)}
+                    />
+                  </span>
+                </p>
+              </div>
+              <div className="SettingParagraph">
+                <Form onSubmit={handleLegal}>
+                  <Form.Group controlId="exampleForm.ControlTextarea1">
+                    <Form.Control
+                      as="textarea"
+                      type="text"
+                      rows={16}
+                      value={ legalContent || legal?.content}
+                    onChange={(e)=> setLegalContent(e.target.value)}
+                      readOnly={!isEdit}
+                    />
+                  </Form.Group>
+                  {isEdit && (
+                <div className="setting_edit_btn">
+                  <Button type="submit">Update</Button>
+                </div>
+              )}
+                </Form>
+                
+              </div>
+             
             </div>
           ) : null}
         </div>

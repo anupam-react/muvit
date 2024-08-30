@@ -24,6 +24,15 @@ import AddCoupon from "../Pages/AddCoupon";
 import UpdateCoupon from "../Pages/UpdateCoupon";
 import UpdateBanner from "../Pages/UpdateBanner";
 import PendingVerificationUser from "../Pages/DashboardPages/PendingVerificationUser";
+import VehiclePrice from "../Pages/DashboardPages/VehiclePrice";
+import AddVehiclePrice from "../Pages/DashboardPages/AddVehiclePrice";
+import UpdateVehiclePrice from "../Pages/DashboardPages/UpdateVehiclePrice";
+import NotificationPage from "../Pages/NotificationPage";
+import AddNotification from "../Pages/AddNotification";
+import Transaction from "../Pages/Transaction";
+import Faq from "../Pages/Faq";
+import AddFaq from "../Pages/AddFaq";
+import UpdateFaq from "../Pages/UpdateFaq";
 
 const All_Routes = () => {
   return (
@@ -40,6 +49,12 @@ const All_Routes = () => {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/booking" element={<BookingPage />} />
       <Route path="/booking/:id" element={<BookingDetaills />} />
+      <Route path="/notification" element={<NotificationPage />} />
+      <Route path="/transaction" element={<Transaction />} />
+      <Route path="/faq" element={<Faq />} />
+      <Route path="/faq/add-faq" element={<AddFaq />} />
+      <Route path="/faq/update-faq/:id" element={<UpdateFaq />} />
+      <Route path="/notification/add-notification" element={<AddNotification />} />
       <Route path="/promotions" element={<PromotionPage />} />
       <Route path="/promotions/add-banner" element={<AddBanner />} />
       <Route path="/promotions/update-banner/:id" element={<UpdateBanner />} />
@@ -47,6 +62,7 @@ const All_Routes = () => {
       <Route path="/promotions/update-coupon/:id" element={<UpdateCoupon />} />
       <Route path="/setting/privacy-policy" element={<Settings />} />
       <Route path="/setting/contact-us" element={<Settings />} />
+      <Route path="/setting/legal" element={<Settings />} />
       <Route path="/setting/admin" element={<AdminProfile />} />
       <Route path="/setting/payment" element={<AdminProfile />} />
       <Route path="/dashboard/delivery-zone" element={<DeliveryZone />} />
@@ -57,8 +73,11 @@ const All_Routes = () => {
       <Route path="/dashboard/delivery-partner" element={<DeliveryPartner />} />
       <Route path="/dashboard/add-partner" element={<AddDeliveryPartner />} />
       <Route path="/dashboard/vehicle-type" element={<VehicleType />} />
+      <Route path="/dashboard/vehicle-price" element={<VehiclePrice />} />
       <Route path="/dashboard/add-vehicle-type" element={<AddVehicleType />} />
+      <Route path="/dashboard/add-vehicle-price" element={<AddVehiclePrice />} />
       <Route path="/dashboard/update-vehicle-type/:id" element={<UpdateVehicleType />} />
+      <Route path="/dashboard/update-vehicle-price/:id" element={<UpdateVehiclePrice />} />
       <Route path="/dashboard/total-user" element={<TotalUser />} />
       <Route path="/dashboard/verify-user" element={<PendingVerificationUser />} />
       <Route path="/admin-profile" element={<AdminProfile />} />

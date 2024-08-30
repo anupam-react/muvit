@@ -222,7 +222,7 @@ const Dashboard = () => {
               </div>
             </div>
             <div
-              onClick={() => navigate("/dashboard/vehicle-type")}
+              onClick={() => navigate("/dashboard/vehicle-price")}
               className="dashboard_container_split_totals1"
             >
               <div

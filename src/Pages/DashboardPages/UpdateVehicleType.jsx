@@ -3,7 +3,7 @@ import { Button, Form, Table } from "react-bootstrap";
 import { useEffect, useRef, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
-import { createApiData, fetchApiData, updateApiData } from "../../utiils";
+import { fetchApiData, updateApiData } from "../../utiils";
 
 const UpdateVehicleType = () => {
   const [vechicle, setVehicle] = useState({
@@ -22,8 +22,8 @@ const UpdateVehicleType = () => {
   const fileInputRef = useRef(null);
   const fileInputRef1 = useRef(null);
   const navigate = useNavigate();
+
   const {id} = useParams()
-  console.log(bannerImage);
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;

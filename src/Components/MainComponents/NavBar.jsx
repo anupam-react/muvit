@@ -24,6 +24,16 @@ const NavBar = ({data}) => {
     },
   
     {
+      name: "Notification",
+      path: "/notification",
+    },
+  
+    {
+      name: "Transaction",
+      path: "/transaction",
+    },
+  
+    {
       name: "Dashboard",
       path: "/dashboard/delivery-zone",
     },

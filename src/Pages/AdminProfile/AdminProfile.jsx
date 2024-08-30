@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 const AdminProfile = () => {
   const navigate = useNavigate();
-  const [profile , setProfile] =  useState()
+  const [profile, setProfile] = useState();
   const [allBooking, setAllBooking] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { pathname } = useLocation();
@@ -18,16 +18,16 @@ const AdminProfile = () => {
     setProfile(data?.data);
   }
 
-  async function getBooking(search="", role="") {
+  async function getBooking(search = "", role = "") {
     const data = await fetchApiData(
       `https://muvit-project.vercel.app/api/v1/admin/searchBooking?search=${search}&role=${role}`
     );
     setAllBooking(data?.data?.docs);
   }
-  useEffect(()=>{
-    getProfile()
-    getBooking()
-  },[])
+  useEffect(() => {
+    getProfile();
+    getBooking();
+  }, []);
   return (
     <div>
       <div className="admin-profile">
@@ -60,8 +60,14 @@ const AdminProfile = () => {
         <div>
           {pathname === "/setting/admin" ? (
             <div>
-              <div >
-                <Table  style={{height:"70vh" , overflowY:"scroll" , textAlign: "center"}}>
+              <div>
+                <Table
+                  style={{
+                    height: "70vh",
+                    overflowY: "scroll",
+                    textAlign: "center",
+                  }}
+                >
                   <thead>
                     <tr style={{ border: "none" }}>
                       <th
@@ -124,15 +130,25 @@ const AdminProfile = () => {
                   </thead>
                   <tbody>
                     <tr style={{ border: "none" }}>
-                      <td style={{ border: "none" }}>{profile?.user?.fullName}</td>
-                      <td style={{ border: "none" }}>{profile?.user?.userType}</td>
+                      <td style={{ border: "none" }}>
+                        {profile?.user?.fullName}
+                      </td>
+                      <td style={{ border: "none" }}>
+                        {profile?.user?.userType}
+                      </td>
                       <td style={{ border: "none" }}>{profile?.user?.email}</td>
-                      <td style={{ border: "none" }}>{profile?.user?.mobileNumber}</td>
+                      <td style={{ border: "none" }}>
+                        {profile?.user?.mobileNumber}
+                      </td>
                       <td style={{ border: "none" }}>
                         <span
-                        className={profile?.user?.status ? "active-status" : "inactive-status"}
+                          className={
+                            profile?.user?.status
+                              ? "active-status"
+                              : "inactive-status"
+                          }
                         >
-                          {profile?.user?.status ? "Acive": "Inactive"}
+                          {profile?.user?.status ? "Acive" : "Inactive"}
                         </span>
                       </td>
                       <td style={{ border: "none" }}>
@@ -147,8 +163,8 @@ const AdminProfile = () => {
                   </tbody>
                 </Table>
                 <div className="setting_edit_btn">
-                        <Button type="submit">Update</Button>
-                      </div>
+                  <Button type="submit">Update</Button>
+                </div>
               </div>
             </div>
           ) : pathname === "/setting/payment" ? (
@@ -180,14 +196,18 @@ const AdminProfile = () => {
                       />
                     </span>
                     <span>
-                    <Form.Select onChange={(e) =>{
-                getBooking("", e.target.value);
-                 }}>
-                <option disabled selected>Choose Category</option>
-                <option value="driver">Driver</option>
-                <option value="helper">Helper</option>
-                <option value="helper">Helper and Delivery</option>
-              </Form.Select>
+                      <Form.Select
+                        onChange={(e) => {
+                          getBooking("", e.target.value);
+                        }}
+                      >
+                        <option disabled selected>
+                          Choose Category
+                        </option>
+                        <option value="driver">Driver</option>
+                        <option value="helper">Helper</option>
+                        <option value="helper">Helper and Delivery</option>
+                      </Form.Select>
                     </span>
                   </span>
                 </div>
@@ -265,27 +285,28 @@ const AdminProfile = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {allBooking?.map((data , i)=>(
-                      <tr style={{ border: "none" }} key={i}>
-                        <td style={{ border: "none" }}>#10{i+1}</td>
-                        <td style={{ border: "none" }}>{getDateFromISOString(data?.createdAt)}</td>
-                        <td style={{ border: "none" }}>{data?.bookingId}</td>
-                        <td style={{ border: "none" }}>#101</td>
-                        <td style={{ border: "none" }}>
-                          <span
-                            className={
-                              data?.paymentStatus === "PAID"
-                                ? "complete-booking"
-                                : "pending-booking"
-                            }
-                          >
-                            {data?.paymentStatus}
-                          </span>
-                        </td>
-                        <td style={{ border: "none" }}>{data?.totalPrice}</td>
-                        <td style={{ border: "none" }}>000</td>
-                      </tr>
-
+                      {allBooking?.map((data, i) => (
+                        <tr style={{ border: "none" }} key={i}>
+                          <td style={{ border: "none" }}>#10{i + 1}</td>
+                          <td style={{ border: "none" }}>
+                            {getDateFromISOString(data?.createdAt)}
+                          </td>
+                          <td style={{ border: "none" }}>{data?.bookingId}</td>
+                          <td style={{ border: "none" }}>#101</td>
+                          <td style={{ border: "none" }}>
+                            <span
+                              className={
+                                data?.paymentStatus === "PAID"
+                                  ? "complete-booking"
+                                  : "pending-booking"
+                              }
+                            >
+                              {data?.paymentStatus}
+                            </span>
+                          </td>
+                          <td style={{ border: "none" }}>{data?.totalPrice}</td>
+                          <td style={{ border: "none" }}>000</td>
+                        </tr>
                       ))}
                     </tbody>
                   </Table>

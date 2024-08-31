@@ -33,6 +33,9 @@ import Transaction from "../Pages/Transaction";
 import Faq from "../Pages/Faq";
 import AddFaq from "../Pages/AddFaq";
 import UpdateFaq from "../Pages/UpdateFaq";
+import Subadmin from "../Pages/Subadmin";
+import AddSubAdmin from "../Pages/AddSubAdmin";
+import UpdateRole from "../Pages/UpdateRole";
 
 const All_Routes = () => {
   return (
@@ -51,6 +54,9 @@ const All_Routes = () => {
       <Route path="/booking/:id" element={<BookingDetaills />} />
       <Route path="/notification" element={<NotificationPage />} />
       <Route path="/transaction" element={<Transaction />} />
+      <Route path="/subadmin" element={<Subadmin />} />
+      <Route path="/subadmin/add-subadmin" element={<AddSubAdmin />} />
+      <Route path="/subadmin/update-role/:id" element={<UpdateRole />} />
       <Route path="/faq" element={<Faq />} />
       <Route path="/faq/add-faq" element={<AddFaq />} />
       <Route path="/faq/update-faq/:id" element={<UpdateFaq />} />
@@ -63,6 +69,7 @@ const All_Routes = () => {
       <Route path="/setting/privacy-policy" element={<Settings />} />
       <Route path="/setting/contact-us" element={<Settings />} />
       <Route path="/setting/legal" element={<Settings />} />
+      <Route path="/setting/tax" element={<Settings />} />
       <Route path="/setting/admin" element={<AdminProfile />} />
       <Route path="/setting/payment" element={<AdminProfile />} />
       <Route path="/dashboard/delivery-zone" element={<DeliveryZone />} />

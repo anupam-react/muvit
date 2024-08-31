@@ -92,7 +92,7 @@ const UpdateVehiclePrice = () => {
                 style={{ color: "#202224", fontWeight: "bold" }}
               />
             </span>
-            <span style={{ color: "#A6A7A7" }}>Add Vehicle Price</span>
+            <span style={{ color: "#A6A7A7" }}>Update Vehicle Price</span>
           </span>
         </div>
         <div></div>{" "}

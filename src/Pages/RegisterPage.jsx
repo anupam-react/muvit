@@ -84,6 +84,7 @@ const RegisterPage = () => {
                 <Form.Label>Email Address</Form.Label>
                 <Form.Control
                   type="text"
+                  value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </Form.Group>

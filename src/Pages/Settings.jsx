@@ -1,38 +1,36 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import HOC from "../Components/MainComponents/HOC";
 import { Button, Form } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { createApiData, fetchApiData, updateApiData } from "../utiils";
 
 const Settings = () => {
   const [contact, setContact] = useState({
-    mobileNumber:"",
-    email:"",
-    address:"",
-    website:"",
-    website1:"",
-    desc:""
-  })
+    mobileNumber: "",
+    email: "",
+    address: "",
+    website: "",
+    website1: "",
+    desc: "",
+  });
 
-  const [policyHeader , setPolicyHeader] = useState("")
-  const [legalContent , setLegalContent] = useState("")
-  const [policy , setPolicy] = useState({})
-  const [legal , setLegal] = useState({})
-
+  const [policyHeader, setPolicyHeader] = useState("");
+  const [legalContent, setLegalContent] = useState("");
+  const [taxAmount, setTaxAmount] = useState("");
+  const [policy, setPolicy] = useState({});
+  const [legal, setLegal] = useState({});
+  const [tax, setTax] = useState({});
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [isEdit, setIsEdit] = useState(false);
 
-
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setContact((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+      ...prevData,
+      [name]: value,
+    }));
   };
 
   async function getContact() {
@@ -41,12 +39,14 @@ const Settings = () => {
     );
     setContact(data?.data[0]);
   }
+
   async function getPolicy() {
     const data = await fetchApiData(
       "https://muvit-project.vercel.app/api/v1/admin/privacy"
     );
     setPolicy(data?.data[0]);
   }
+
   async function getLegal() {
     const data = await fetchApiData(
       "https://muvit-project.vercel.app/api/v1/admin/Legal"
@@ -54,40 +54,44 @@ const Settings = () => {
     setLegal(data?.data[0]);
   }
 
+  async function getTax() {
+    const data = await fetchApiData(
+      "https://muvit-project.vercel.app/api/v1/admin/tax-amount"
+    );
+    setTax(data?.data[0]);
+  }
 
-  useEffect(()=>{
-    getContact()
-    getPolicy()
-    getLegal()
-  },[])
+  useEffect(() => {
+    getContact();
+    getPolicy();
+    getLegal();
+    getTax();
+  }, []);
 
   const handleContact = async (e) => {
     e.preventDefault();
 
     const formData = {
-      mobileNumber:  contact?.mobileNumber ,
-      email: contact?.email ,
-      address: contact?.address, 
-      website: contact?.website ,
-      website1: contact?.website1 ,
+      mobileNumber: contact?.mobileNumber,
+      email: contact?.email,
+      address: contact?.address,
+      website: contact?.website,
+      website1: contact?.website1,
       desc: contact?.desc,
     };
     try {
-      if(!contact?._id){
+      if (!contact?._id) {
         const response = await createApiData(
           "https://muvit-project.vercel.app/api/v1/admin/call/us",
           formData
-        )
+        );
         console.log(response);
+      } else {
+        await updateApiData(
+          `https://muvit-project.vercel.app/api/v1/admin/call-us/${contact?._id}`,
+          formData
+        );
       }
-        else{
-          await updateApiData(
-            `https://muvit-project.vercel.app/api/v1/admin/call-us/${contact?._id}`,
-            formData
-          );
-        }
-     
-
     } catch (error) {
       console.log(error);
     }
@@ -97,24 +101,21 @@ const Settings = () => {
     e.preventDefault();
 
     const formData = {
-      header:  policyHeader || policy?.header 
+      header: policyHeader || policy?.header,
     };
     try {
-      if(!policy?._id){
+      if (!policy?._id) {
         const response = await createApiData(
           "https://muvit-project.vercel.app/api/v1/admin/privacy",
           formData
-        )
+        );
         console.log(response);
+      } else {
+        await updateApiData(
+          `https://muvit-project.vercel.app/api/v1/admin/privacy/${policy?._id}`,
+          formData
+        );
       }
-        else{
-          await updateApiData(
-            `https://muvit-project.vercel.app/api/v1/admin/privacy/${policy?._id}`,
-            formData
-          );
-        }
-     
-
     } catch (error) {
       console.log(error);
     }
@@ -124,24 +125,44 @@ const Settings = () => {
     e.preventDefault();
 
     const formData = {
-      content:  legalContent || legal?.header 
+      content: legalContent || legal?.header,
     };
     try {
-      if(!legal?._id){
+      if (!legal?._id) {
         const response = await createApiData(
           "https://muvit-project.vercel.app/api/v1/admin/Legal",
           formData
-        )
+        );
         console.log(response);
+      } else {
+        await updateApiData(
+          `https://muvit-project.vercel.app/api/v1/admin/Legal/${legal?._id}`,
+          formData
+        );
       }
-        else{
-          await updateApiData(
-            `https://muvit-project.vercel.app/api/v1/admin/Legal/${legal?._id}`,
-            formData
-          );
-        }
-     
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleTax = async (e) => {
+    e.preventDefault();
 
+    const formData = {
+      percentage: taxAmount || tax?.percentage,
+    };
+    try {
+      if (!tax?._id) {
+        const response = await createApiData(
+          "https://muvit-project.vercel.app/api/v1/admin/tax-amount",
+          formData
+        );
+        console.log(response);
+      } else {
+        await updateApiData(
+          `https://muvit-project.vercel.app/api/v1/admin/tax-amount/${tax?._id}`,
+          formData
+        );
+      }
     } catch (error) {
       console.log(error);
     }
@@ -191,6 +212,18 @@ const Settings = () => {
             Legal
           </p>
           <p
+            onClick={() => navigate("/setting/tax")}
+            style={{
+              color: pathname === "/setting/tax" ? "white" : "#202224",
+              padding: pathname === "/setting/legal" ? "1rem 2rem" : "0",
+              backgroundColor:
+                pathname === "/setting/tax" ? "#FEBF05" : "white",
+              borderRadius: pathname === "/setting/tax" ? "10px" : "0",
+            }}
+          >
+            Tax Amount
+          </p>
+          <p
             onClick={() => navigate("/setting/admin")}
             style={{
               color: pathname === "/setting/admin" ? "white" : "#202224",
@@ -226,7 +259,7 @@ const Settings = () => {
                     color: "#202224",
                   }}
                 >
-                   Privacy Policy
+                  Privacy Policy
                   <span>
                     <Icon
                       icon="material-symbols-light:edit-outline"
@@ -245,20 +278,18 @@ const Settings = () => {
                       as="textarea"
                       type="text"
                       rows={16}
-                      value={ policyHeader || policy?.header}
-                    onChange={(e)=> setPolicyHeader(e.target.value)}
+                      value={policyHeader || policy?.header}
+                      onChange={(e) => setPolicyHeader(e.target.value)}
                       readOnly={!isEdit}
                     />
                   </Form.Group>
                   {isEdit && (
-                <div className="setting_edit_btn">
-                  <Button type="submit">Update</Button>
-                </div>
-              )}
+                    <div className="setting_edit_btn">
+                      <Button type="submit">Update</Button>
+                    </div>
+                  )}
                 </Form>
-                
               </div>
-             
             </div>
           ) : pathname === "/setting/contact-us" ? (
             <div>
@@ -274,7 +305,7 @@ const Settings = () => {
                     Contact Details{" "}
                     <span>
                       <Icon
-                         onClick={() => setIsEdit(!isEdit)}
+                        onClick={() => setIsEdit(!isEdit)}
                         icon="material-symbols-light:edit-outline"
                         width="1.2rem"
                         height="1.2rem"
@@ -284,7 +315,11 @@ const Settings = () => {
                   </p>
                 </div>
                 <div className="mt-2">
-                  <Form onSubmit={handleContact} style={{ color: "#909091" }} className="setting_form">
+                  <Form
+                    onSubmit={handleContact}
+                    style={{ color: "#909091" }}
+                    className="setting_form"
+                  >
                     {" "}
                     <Form.Group className="mb-3">
                       <Form.Label>Address</Form.Label>
@@ -368,20 +403,58 @@ const Settings = () => {
                       as="textarea"
                       type="text"
                       rows={16}
-                      value={ legalContent || legal?.content}
-                    onChange={(e)=> setLegalContent(e.target.value)}
+                      value={legalContent || legal?.content}
+                      onChange={(e) => setLegalContent(e.target.value)}
                       readOnly={!isEdit}
                     />
                   </Form.Group>
                   {isEdit && (
-                <div className="setting_edit_btn">
-                  <Button type="submit">Update</Button>
-                </div>
-              )}
+                    <div className="setting_edit_btn">
+                      <Button type="submit">Update</Button>
+                    </div>
+                  )}
                 </Form>
-                
               </div>
-             
+            </div>
+          ) : pathname === "/setting/tax" ? (
+            <div>
+              <div>
+                <p
+                  style={{
+                    fontSize: "2rem",
+                    fontWeight: "bold",
+                    color: "#202224",
+                  }}
+                >
+                  Tax Amount
+                  <span>
+                    <Icon
+                      icon="material-symbols-light:edit-outline"
+                      width="1.2rem"
+                      height="1.2rem"
+                      style={{ color: "gray", cursor: "pointer" }}
+                      onClick={() => setIsEdit(!isEdit)}
+                    />
+                  </span>
+                </p>
+              </div>
+              <div className="SettingParagraph">
+                <Form onSubmit={handleTax}>
+                  <Form.Group controlId="exampleForm.ControlTextarea1">
+                    <Form.Control
+                      type="text"
+                      value={taxAmount || tax?.percentage}
+                      onChange={(e) => setTaxAmount(e.target.value)}
+                      readOnly={!isEdit}
+                    />
+                  </Form.Group>
+                  {isEdit && (
+                    <div className="setting_edit_btn">
+                      <Button type="submit">Update</Button>
+                    </div>
+                  )}
+                </Form>
+              </div>
             </div>
           ) : null}
         </div>

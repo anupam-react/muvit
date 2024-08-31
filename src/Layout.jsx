@@ -26,7 +26,7 @@ const Layout = ({ children }) => {
      <div className={`${show ? "HOC_Admin_Panel" : ""}`}>
         {show && (
           <div className={`${show ? "admin_sidebar" : ""}`}>
-            <SideBar toggleSidebar={toggleSidebar} />
+            <SideBar toggleSidebar={toggleSidebar} data={profile}/>
           </div>
         )}
         <div className="content">

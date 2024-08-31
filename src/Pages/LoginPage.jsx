@@ -12,6 +12,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubAdmin , setIsSubAdmin] = useState(false)
   const navigate = useNavigate();
   const [initialPage, setInitialPage] = useState(true);
 
@@ -38,7 +39,8 @@ const LoginPage = () => {
       email,
       password,
     };
-  
+  if(!isSubAdmin){
+
     try {
       const response = await axios.post(
         "https://muvit-project.vercel.app/api/v1/admin/login",
@@ -53,6 +55,22 @@ const LoginPage = () => {
       errorToast("Wrong email or password");
       return error;
     }
+  }else{
+    try {
+      const response = await axios.post(
+        "https://muvit-project.vercel.app/api/v1/admin/signinSubAdmin",
+        formData,
+      );
+      successToast("LogIn Successfully");
+      sessionStorage.setItem("token", response?.data?.accessToken);
+      navigate("/dashboard");
+     
+    } catch (error) {
+      console.log(error);
+      errorToast("Wrong email or password");
+      return error;
+    } 
+  }
   };
   return (
     <div>
@@ -68,6 +86,10 @@ const LoginPage = () => {
             <div className="right_side_form_container">
               <p>Welcome to Muvit!</p>
               <p>Please log-in your account</p>
+            </div>
+            <div style={{display:"flex" , justifyContent:"center" , gap:"20px"}}>
+            <button onClick={()=>{setIsSubAdmin(false)}} className={isSubAdmin ? "nonActive-button" : "active-button"} >Admin</button>
+            <button onClick={()=>{setIsSubAdmin(true)}} className={isSubAdmin ? "active-button" : "nonActive-button"}>SubAdmin</button>
             </div>
             <div>
               <hr />
@@ -113,7 +135,7 @@ const LoginPage = () => {
                 <Button className="login_page_btn" type="submit">
                   Login
                 </Button>
-              <div onClick={()=> navigate('/register')} style={{display:"flex" , justifyContent:"center" , cursor:"pointer"}}>Don't Have An Account?<span style={{color:"#febf05"}}>Sign Up Here</span>  </div>
+          {!isSubAdmin && <div onClick={()=> navigate('/register')} style={{display:"flex" , justifyContent:"center" , cursor:"pointer"}}>Don't Have An Account?<span style={{color:"#febf05"}}>Sign Up Here</span>  </div>}
               </Form>
             </div>
           </div>

@@ -8,6 +8,7 @@ import { deleteApiData, fetchApiData } from "../../utiils";
 const VehicleType = () => {
   const [isAssigned, setIsAssigned] = useState(true);
   const [allTypes, setAllTypes] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   async function getType(search="") {
@@ -62,16 +63,21 @@ const VehicleType = () => {
               <Form.Control
                 type="text"
                 placeholder="Search by Date, ID or Order"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  getType(e.target.value);
+                }}
               />
             </span>
-            <span>
+            {/* <span>
               <Form.Select>
                 <option value="">Filter</option>
                 <option value={"driver"}>Driver</option>
                 <option value={"helper"}>Helper</option>
                 <option value={"both"}>Helper and Delivery</option>
               </Form.Select>
-            </span>
+            </span> */}
           </span>
         </div>
         <div></div>

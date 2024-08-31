@@ -79,7 +79,7 @@ const TotalUser = () => {
                 <option value="SUB-ADMIN">SUB-ADMIN</option>
                 <option value="USER">USER</option>
                 <option value="PARTNER">PARTNER</option>
-                <option value="PARTNER">HELPER</option>
+                <option value="HELPER">HELPER</option>
                 <option value="COURIER">COURIER</option>
               </Form.Select>
             </span>

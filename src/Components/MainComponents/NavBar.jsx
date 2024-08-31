@@ -34,6 +34,11 @@ const NavBar = ({data}) => {
     },
   
     {
+      name: "SubAdmin",
+      path: "/subadmin",
+    },
+  
+    {
       name: "Dashboard",
       path: "/dashboard/delivery-zone",
     },

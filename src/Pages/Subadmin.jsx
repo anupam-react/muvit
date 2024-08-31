@@ -1,62 +1,51 @@
-import { Icon } from "@iconify/react/dist/iconify.js";
-import { Form, Table } from "react-bootstrap";
+import { Button, Table } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchApiData, updateApiData } from "../../utiils";
-import { successToast } from "../../Components/Toast";
+import { deleteApiData, fetchApiData, getDateFromISOString } from "../utiils";
 
-const PendingVerificationUser = () => {
-  const [allUsers, setAllUsers] = useState([]);
+const Subadmin = () => {
+  const [allSubAdmin, setAllSubAdmin] = useState([]);
+
   const navigate = useNavigate();
 
-  async function getUsers() {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setAssignRole((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  async function getSubAdmin() {
     const data = await fetchApiData(
-      `https://muvit-project.vercel.app/api/v1/admin/users/pending-verification`
+      `https://muvit-project.vercel.app/api/v1/admin/searchUser?userType=SUB-ADMIN`
     );
-    setAllUsers(data?.data);
+    setAllSubAdmin(data?.data?.docs);
+  }
+  console.log(allSubAdmin);
+
+  async function handleDeleteUser(id) {
+    const data = await deleteApiData(
+      `https://muvit-project.vercel.app/api/v1/admin/users/profile/delete/${id}`
+    );
+    getSubAdmin();
   }
 
   useEffect(() => {
-    getUsers();
+    getSubAdmin();
   }, []);
-
-  const handleSubmit = async (id) => {
-  
-    try {
-      const response = await updateApiData(
-        `https://muvit-project.vercel.app/api/v1/admin/users/${id}/update-verification-status`,
-        {isVerified: true}
-      );
-      console.log(response);
-      getUsers()
-     successToast("Verification SuccessFully")
-
-    } catch (error) {
-      console.log(error);
-    }
-    // Handle form submission logic here
-  };
 
   return (
     <div>
-      {" "}
       <div className="dashboard_container_split2">
-        <div className="dashboard_container_split_totals2">
-          <span style={{ display: "flex", gap: ".5rem", fontSize: "2rem" }}>
-            <span
-              onClick={() => navigate("/dashboard/total-user")}
-              style={{ cursor: "pointer" }}
-            >
-              <Icon
-                icon="solar:alt-arrow-left-linear"
-                width="1.2rem"
-                height="2.2rem"
-                style={{ color: "#202224", fontWeight: "bold" }}
-              />
-            </span>
-            <span>Pending Verification Users</span>
-          </span>
-       
+        <div style={{ display: "flex", justifyContent: "end", gap: "10px" }}>
+          <Button
+            style={{ backgroundColor: "#FEBF05", border: "none" }}
+            onClick={() => navigate("/subadmin/add-subadmin")}
+          >
+            + Create Sub-Admin
+          </Button>
+          
         </div>
         <div></div>
         <div className="mt-3" style={{ height: "70vh", overflowY: "scroll" }}>
@@ -71,16 +60,7 @@ const PendingVerificationUser = () => {
                     border: "none",
                   }}
                 >
-                  ID
-                </th>
-                <th
-                  style={{
-                    backgroundColor: "#F1F4F9",
-                    color: "#202224",
-                    border: "none",
-                  }}
-                >
-                  Name
+                  User Name
                 </th>
                 <th
                   style={{
@@ -100,6 +80,7 @@ const PendingVerificationUser = () => {
                 >
                   Mobile
                 </th>
+               
                 <th
                   style={{
                     backgroundColor: "#F1F4F9",
@@ -107,14 +88,11 @@ const PendingVerificationUser = () => {
                     border: "none",
                   }}
                 >
-                  User Type
+                  Status
                 </th>
-               
-
                 <th
                   style={{
                     backgroundColor: "#F1F4F9",
-                    borderRadius: "0 12px 12px 0",
                     color: "#202224",
                     border: "none",
                   }}
@@ -124,17 +102,25 @@ const PendingVerificationUser = () => {
               </tr>
             </thead>
             <tbody>
-              {allUsers?.map((item, i) => (
-                <tr style={{ border: "none" }} key={i}>
-                  <td style={{ border: "none" }}>{item?.userId}</td>
-                  <td style={{ border: "none" }}>{item?.fullName}</td>
+              {allSubAdmin?.map((item, i) => (
+                <tr key={i} style={{ border: "none", cursor: "pointer" }}>
+                  <td style={{ border: "none", width: "150px" }}>
+                    {item?.fullName}
+                  </td>
                   <td style={{ border: "none" }}>{item?.email}</td>
-                  <td style={{ border: "none" }}>{item?.mobileNumber}</td>
-                  <td style={{ border: "none" }}>{item?.userType}</td>
-                
+                 
+
+                 
+                  <td style={{ border: "none", width: "200px" }}>
+                    {item?.mobileNumber}
+                  </td>
+                  <td style={{ border: "none", width: "60px" }}>
+                    {item?.status ? "Active" : "Inactive"}
+                  </td>
                   <td style={{ border: "none" }}>
+                  <button onClick={()=> navigate(`/subadmin/update-role/${item?._id}`)} style={{backgroundColor:"#FEBF05" , marginRight:"20px", border:"none", color:"white", padding:"5px 10px",  borderRadius:"5px"}}>Update Role</button>
                     <button
-                      onClick={() => handleSubmit(item?._id)}
+                      onClick={() => handleDeleteUser(item?._id)}
                       style={{
                         backgroundColor: "red",
                         border: "none",
@@ -143,7 +129,7 @@ const PendingVerificationUser = () => {
                         borderRadius: "5px",
                       }}
                     >
-                      Verification
+                      Delete
                     </button>
                   </td>
                 </tr>
@@ -156,4 +142,4 @@ const PendingVerificationUser = () => {
   );
 };
 
-export default PendingVerificationUser;
+export default Subadmin;

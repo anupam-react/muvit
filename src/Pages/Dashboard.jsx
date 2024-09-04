@@ -28,7 +28,7 @@ const Dashboard = () => {
   }
   async function getUsers() {
     const data = await fetchApiData(
-      "https://muvit-project.vercel.app/api/v1/admin/searchUser"
+      "https://muvit-project.vercel.app/api/v1/admin/searchUser?page=1&limit=1000"
     );
     setUser(data?.data?.docs);
   }

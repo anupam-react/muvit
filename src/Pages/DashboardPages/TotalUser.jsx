@@ -13,12 +13,12 @@ const TotalUser = () => {
   async function getUsers(search = "", userType = "") {
     if(userType === ""){
       const data = await fetchApiData(
-        `https://muvit-project.vercel.app/api/v1/admin/searchUser`
+        `https://muvit-project.vercel.app/api/v1/admin/searchUser?page=1&limit=1000`
       );
       setAllUsers(data?.data?.docs);
     }else{
       const data = await fetchApiData(
-        `https://muvit-project.vercel.app/api/v1/admin/searchUser?search=${search}&userType=${userType}`
+        `https://muvit-project.vercel.app/api/v1/admin/searchUser?search=${search}&userType=${userType}&page=1&limit=1000`
       );
       setAllUsers(data?.data?.docs); 
     }

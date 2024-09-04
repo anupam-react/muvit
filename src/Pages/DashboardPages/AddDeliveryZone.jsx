@@ -12,7 +12,7 @@ const AddDeliveryZone = () => {
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [pinCode, setPinCode] = useState("");
-  const [assignProfile, setAssignProfile] = useState("");
+  const [assignProfile, setAssignProfile] = useState("PARTNER");
   const [vehicleType, setVehicleType] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -99,6 +99,7 @@ const AddDeliveryZone = () => {
         formData
       );
       console.log(response);
+      navigate('/dashboard/delivery-zone')
       setStreet("");
       setState("");
       setCity("");
@@ -127,7 +128,7 @@ const AddDeliveryZone = () => {
           <div className="mb-5 mt-2 dashboard_container_split_totals2 ">
             <span style={{ display: "flex", gap: ".5rem", fontSize: "2rem" }}>
               <span
-                onClick={() => navigate("/dashboard/delivery-zone")}
+                onClick={() => setIsNextPage(false)}
                 style={{ cursor: "pointer" }}
               >
                 <Icon
@@ -147,8 +148,8 @@ const AddDeliveryZone = () => {
                   fontSize: ".8rem",
                 }}
               >
-                <span>Sr no. 000_1</span> <br />
-                <span>365 South Inverness Street, Dextres, USA. 621 398</span>
+                {/* <span>Sr no. 000_1</span> <br />
+                <span>365 South Inverness Street, Dextres, USA. 621 398</span> */}
               </p>
             </span>
           </div>
@@ -292,10 +293,10 @@ const AddDeliveryZone = () => {
                       onChange={(e) => setAssignProfile(e.target.value)}
                     >
                       <option disabled>Select Assign Profile</option>
-                      <option value="PARTNER">PARTNER</option>
+                      <option value="PARTNER">DRIVER</option>
                       <option value="SUB-ADMIN">SUB-ADMIN</option>
                       <option value="HELPER">HELPER</option>
-                      <option value="COURIER">COURIER</option>
+                      <option value="COURIER">HELPER & DELIVERY</option>
                     </Form.Select>
                   </Form.Group>
                   <Form.Group>

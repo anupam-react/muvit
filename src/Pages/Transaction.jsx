@@ -90,6 +90,15 @@ const Transaction = () => {
                     border: "none",
                   }}
                 >
+                User type
+                </th>
+                <th
+                  style={{
+                    backgroundColor: "#F1F4F9",
+                    color: "#202224",
+                    border: "none",
+                  }}
+                >
                   Transaction Type
                 </th>
                 <th
@@ -118,8 +127,11 @@ const Transaction = () => {
                   </td>
                   <td style={{ border: "none" }}>{item?.details}</td>
 
-                  <td style={{ border: "none", width: "60px" }}>
+                  <td style={{ border: "none", width: "100px" }}>
                     {item?.type}
+                  </td>
+                  <td style={{ border: "none", width: "100px" }}>
+                    {item?.user?.userType === "PARTNER" ? "DRIVER" : item?.user?.userType === "COURIER" ? "HELPER & DELIVERY" :  item?.user?.userType}
                   </td>
                   <td style={{ border: "none", width: "200px" }}>
                     {item?.cr ? "Credit" : "Debit"}

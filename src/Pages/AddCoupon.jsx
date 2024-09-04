@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { createApiData } from "../utiils";
 import { warnToast } from "../Components/Toast";
+import { useNavigate } from "react-router-dom";
 
 const AddCoupon = () => {
   const [coupon , setCoupon] = useState({
@@ -14,6 +15,8 @@ const AddCoupon = () => {
     targetUser:"",
     targetCrateria:"",
   })
+
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,6 +55,7 @@ const AddCoupon = () => {
         percentage:"",
         targetUser:"",
         targetCrateria:"",})
+        navigate('/promotions')
     } catch (error) {
       console.log(error)
     }

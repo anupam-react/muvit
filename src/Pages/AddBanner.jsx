@@ -3,6 +3,7 @@ import { Button, Form } from "react-bootstrap";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { createApiData } from "../utiils";
 import { warnToast } from "../Components/Toast";
+import { useNavigate } from "react-router-dom";
 
 const AddBanner = () => {
 
@@ -15,6 +16,8 @@ const AddBanner = () => {
   })
 
   const [bannerImage, setBannerImage] = useState(null);
+
+  const navigate = useNavigate()
 
   const fileInputRef = useRef(null);
 
@@ -66,6 +69,7 @@ const AddBanner = () => {
         validTo:"",
         image:"",
         })
+        navigate('/promotions')
     } catch (error) {
       console.log(error)
     }

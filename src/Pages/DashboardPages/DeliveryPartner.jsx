@@ -81,9 +81,9 @@ const DeliveryPartner = () => {
                 getUsers("", e.target.value);
                 
                  }}>
-                <option value="">Filter</option>
+                <option value="" disabled>Filter</option>
                 <option value="PARTNER">Driver</option>
-                <option value="PARTNER">Helper</option>
+                <option value="HELPER">Helper</option>
                 <option value="COURIER">Helper & Delivery</option>
               </Form.Select>
             </span>
@@ -174,8 +174,8 @@ const DeliveryPartner = () => {
             <tbody>
             {allUsers?.map((item , i)=>(
               <tr style={{ border: "none" }} key={i}>
-                <td style={{ border: "none" }}>{item?.userId}</td>
-                <td style={{ border: "none" }}>{item?.currentRole}</td>
+                <td style={{ border: "none" }}>{i+1}</td>
+                <td style={{ border: "none" }}>{item?.currentRole === "PARTNER" ? "DRIVER" : item?.user?.userType === "COURIER" ? "HELPER & DELIVERY" :  item?.currentRole}</td>
                 <td style={{ border: "none" }}>{item?.fullName}</td>
                 <td style={{ border: "none" }}>{item?.email}</td>
                 <td style={{ border: "none" }}>{item?.mobileNumber}</td>

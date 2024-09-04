@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchApiData, updateApiData } from "../utiils";
+import { successToast } from "../Components/Toast";
 
 const UpdateRole = () => {
   const [role, setRole] = useState({
@@ -77,7 +78,8 @@ const UpdateRole = () => {
         data
       );
       console.log(response);
-    
+    navigate('/subadmin')
+    successToast("Update Role Successfully");
   
     } catch (error) {
       console.log(error);

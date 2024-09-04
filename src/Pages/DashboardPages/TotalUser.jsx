@@ -11,10 +11,17 @@ const TotalUser = () => {
   const navigate = useNavigate();
 
   async function getUsers(search = "", userType = "") {
-    const data = await fetchApiData(
-      `https://muvit-project.vercel.app/api/v1/admin/searchUser?search=${search}&userType=${userType}`
-    );
-    setAllUsers(data?.data?.docs);
+    if(userType === ""){
+      const data = await fetchApiData(
+        `https://muvit-project.vercel.app/api/v1/admin/searchUser`
+      );
+      setAllUsers(data?.data?.docs);
+    }else{
+      const data = await fetchApiData(
+        `https://muvit-project.vercel.app/api/v1/admin/searchUser?search=${search}&userType=${userType}`
+      );
+      setAllUsers(data?.data?.docs); 
+    }
   }
 
   async function handleDeleteType(id) {
@@ -161,7 +168,7 @@ const TotalUser = () => {
             <tbody>
               {allUsers?.map((item, i) => (
                 <tr style={{ border: "none" }} key={i}>
-                  <td style={{ border: "none" }}>{item?.userId}</td>
+                  <td style={{ border: "none" }}>{i+1}</td>
                   <td style={{ border: "none" }}>{item?.fullName}</td>
                   <td style={{ border: "none" }}>{item?.email}</td>
                   <td style={{ border: "none" }}>{item?.mobileNumber}</td>

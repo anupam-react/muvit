@@ -12,7 +12,7 @@ const AddDeliveryPartner = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
     
-  async function getUsers(search="" , role="") {
+  async function getUsers(search="" , role="PARTNER") {
     const data = await fetchApiData(
       `https://muvit-project.vercel.app/api/v1/admin/searchRefunds?search=${search}&role=${role}&refundType=BOOKING`
     );
@@ -58,11 +58,7 @@ const AddDeliveryPartner = () => {
               />
             </span>
             <span>
-              {filter === "PARTNER"
-                ? "Driver"
-                : filter === "HELPER"
-                ? "Helper"
-                : "Helper & Delivery"}{" "}
+             
               Payout
             </span>
           </span>
@@ -84,10 +80,12 @@ const AddDeliveryPartner = () => {
               getUsers("", e.target.value);
                  }}>
                 <option disabled selected>Choose Category</option>
-                <option value="USER">USER</option>
+                {/* <option value="">ALL</option> */}
+            
                 <option value="PARTNER">Driver</option>
                 <option value="HELPER">Helper</option>
                 <option value="COURIER">Helper and Delivery</option>
+                <option value="USER">USER</option>
               </Form.Select>
             </span>
           </span>
@@ -150,12 +148,7 @@ const AddDeliveryPartner = () => {
                     border: "none",
                   }}
                 >
-                  {filter === "driver"
-                    ? "Driver"
-                    : filter === "helper"
-                    ? "Helper"
-                    : "Helper & Delivery"}{" "}
-                  Pay
+                 Admin Amount
                 </th>
                 <th
                   style={{
@@ -164,8 +157,30 @@ const AddDeliveryPartner = () => {
                     border: "none",
                   }}
                 >
-                  Percentage(%)
+                 
+                 Driver Pay
                 </th>
+                <th
+                  style={{
+                    backgroundColor: "#F1F4F9",
+                    color: "#202224",
+                    border: "none",
+                  }}
+                >
+                  {filter === "HELPER"
+                    ? "Helper"
+                    : "Helper & Delivery"}{" "}
+                  Pay
+                </th>
+                {/* <th
+                  style={{
+                    backgroundColor: "#F1F4F9",
+                    color: "#202224",
+                    border: "none",
+                  }}
+                >
+                  Percentage(%)
+                </th> */}
                 <th
                   style={{
                     backgroundColor: "#F1F4F9",
@@ -196,8 +211,10 @@ const AddDeliveryPartner = () => {
                 <td style={{ border: "none" }}>{item?.booking?.distance}</td>
                 <td style={{ border: "none" }}>${item?.booking?.totalPrice}</td>
                 <td style={{ border: "none" }}>{getDateFromISOString(item?.booking?.createdAt)}</td>
-                <td style={{ border: "none" }}>${item?.booking?.driverAmount}</td>
-                <td style={{ border: "none" }}>40%</td>
+                <td style={{ border: "none" }}>${item?.booking?.adminAmount + " (30%)"}</td>
+                <td style={{ border: "none" }}>${item?.booking?.driverAmount } {item?.booking?.vechileType?.name === "Muvit Express" ? "(70%)" : "(40%)"}</td>
+                <td style={{ border: "none" }}>${item?.booking?.helperAmount}  {item?.booking?.vechileType?.name === "Muvit Express" ? "(0%)" : "(30%)"}</td>
+              
                 <td
                   style={{
                     borderStyle: "none",

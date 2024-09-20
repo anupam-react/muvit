@@ -605,7 +605,7 @@ useEffect(()=>{
             <select id="booking" className="input-field" name="partnerId" value={assignRole?.partnerId} onChange={handleChange}>
               <option value="" disabled>Choose ID And Name</option>
               {allUsers?.map((data, i)=>(
-                   <option value={data?.user?._id}>{data?.user?.userId} , {data?.user?.fullName}</option>
+                   <option value={data?.user?._id}>{data?.user?.userId} , {data?.user?.firstName + " " + data?.user?.lastName}</option>
               ))}
             </select>
 

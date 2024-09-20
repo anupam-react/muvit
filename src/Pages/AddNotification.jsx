@@ -125,9 +125,9 @@ const AddNotification = () => {
                 </Form.Select>
               </Form.Group>
               <Form.Group>
-                <Form.Label>Perticular User</Form.Label>
+                <Form.Label>Particular User</Form.Label>
                 <Form.Select
-                  defaultValue="Choose..."
+                  defaultValue="Choose.."
                   name="_id"
                   value={notification?._id}
                   onChange={handleChange}
@@ -135,7 +135,7 @@ const AddNotification = () => {
                   <option selected>Select User</option>
                   {allUsers?.map((data, i) => (
                     <option value={data?._id} key={i}>
-                      {data?.user?.fullName}
+                      {data?.user?.firstName + " " + data?.user?.lastName}
                     </option>
                   ))}
                 </Form.Select>

@@ -169,7 +169,7 @@ const TotalUser = () => {
               {allUsers?.map((item, i) => (
                 <tr style={{ border: "none" }} key={i}>
                   <td style={{ border: "none" }}>{i+1}</td>
-                  <td style={{ border: "none" }}>{item?.fullName}</td>
+                  <td style={{ border: "none" }}>{item?.firstName + " " + item?.lastName}</td>
                   <td style={{ border: "none" }}>{item?.email}</td>
                   <td style={{ border: "none" }}>{item?.mobileNumber}</td>
                   <td style={{ border: "none" }}>{item?.userType}</td>

@@ -207,7 +207,7 @@ const AddDeliveryPartner = () => {
               {allRefund?.map((item, i)=>(
               <tr style={{ border: "none" }}>
                 <td style={{ border: "none" }}>{item?.booking?.bookingId}</td>
-                <td style={{ border: "none" }}>{item?.user?.fullName}</td>
+                <td style={{ border: "none" }}>{item?.user?.firstName + " " + item?.user?.lastName}</td>
                 <td style={{ border: "none" }}>{item?.booking?.distance}</td>
                 <td style={{ border: "none" }}>${item?.booking?.totalPrice}</td>
                 <td style={{ border: "none" }}>{getDateFromISOString(item?.booking?.createdAt)}</td>

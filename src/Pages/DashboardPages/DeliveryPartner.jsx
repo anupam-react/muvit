@@ -176,7 +176,7 @@ const DeliveryPartner = () => {
               <tr style={{ border: "none" }} key={i}>
                 <td style={{ border: "none" }}>{i+1}</td>
                 <td style={{ border: "none" }}>{item?.currentRole === "PARTNER" ? "DRIVER" : item?.user?.userType === "COURIER" ? "HELPER & DELIVERY" :  item?.currentRole}</td>
-                <td style={{ border: "none" }}>{item?.fullName}</td>
+                <td style={{ border: "none" }}>{item?.firstName + " " + item?.lastName}</td>
                 <td style={{ border: "none" }}>{item?.email}</td>
                 <td style={{ border: "none" }}>{item?.mobileNumber}</td>
                 <td style={{ border: "none" }}>{getDateFromISOString(item?.createdAt)}</td>

@@ -120,7 +120,7 @@ const Transaction = () => {
                   style={{ border: "none", cursor: "pointer" }}
                 >
                   <td style={{ border: "none", width: "200px" }}>
-                    {item?.user?.fullName}
+                    {item?.user?.firstName + " " + item?.user?.lastName}
                   </td>
                   <td style={{ border: "none", width: "100px" }}>
                     {item?.amount}

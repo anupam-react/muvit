@@ -144,7 +144,7 @@ const NotificationPage = () => {
                   style={{ border: "none", cursor: "pointer" }}
                 >
                   <td style={{ border: "none", width: "100px" }}>
-                    {item?.recipient?.fullName}
+                    {item?.recipient?.firstName + " " + item?.recipient?.lastName}
                   </td>
                   <td style={{ border: "none" }}>{item?.title}</td>
                   <td style={{ border: "none", width: "60px" }}>

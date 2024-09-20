@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createApiData, fetchApiData, getDateFromISOString } from "../utiils";
 import axios from "axios";
+import { LocationPicker } from "./LocationPicker";
 
 const BookingPage = () => {
   const [isAssigned, setIsAssigned] = useState(false);
@@ -26,8 +27,33 @@ const BookingPage = () => {
     pickupDate:"",
     pickupTime:""
   })
-  const [debouncedAddress, setDebouncedAddress] = useState(pickupAddress);
-  const [debouncedAddress1, setDebouncedAddress1] = useState(dropAddress);
+  const [selectedAddress1, setSelectedAddress1] = useState('');
+  const [selectedAddress2, setSelectedAddress2] = useState('');
+  const [debouncedAddress, setDebouncedAddress] = useState(pickupAddress || selectedAddress1);
+  const [debouncedAddress1, setDebouncedAddress1] = useState(dropAddress || selectedAddress2);
+  const [showMapModal1, setShowMapModal1] = useState(false);
+  const [showMapModal2, setShowMapModal2] = useState(false);
+  const [selectedCoordinates, setSelectedCoordinates] = useState({
+    lat: '',
+    lng: '',
+  });
+
+  const openMapModal = () => setShowMapModal1(true);
+  const closeMapModal = () => setShowMapModal1(false);
+  const openMapModal2 = () => setShowMapModal2(true);
+  const closeMapModal2 = () => setShowMapModal2(false);
+
+  const handleLocationSelect = ({ location, address }) => {
+    setSelectedCoordinates(location);
+    setSelectedAddress1(address);
+    closeMapModal(); // Close the modal after location is selected
+  };
+  const handleLocationSelect2 = ({ location, address }) => {
+    setSelectedAddress2(address);
+    closeMapModal2(); // Close the modal after location is selected
+  };
+
+  console.log(selectedAddress1, selectedCoordinates)
 
 
   const navigate = useNavigate();
@@ -44,8 +70,8 @@ const BookingPage = () => {
 
   useEffect(() => {
     const timerId = setTimeout(() => {
-        setDebouncedAddress(pickupAddress);
-        setDebouncedAddress1(dropAddress);
+        setDebouncedAddress(pickupAddress || selectedAddress1);
+        setDebouncedAddress1(dropAddress || selectedAddress2);
     }, 1000); // 500ms delay
 
     return () => {
@@ -59,6 +85,7 @@ useEffect(() => {
       getCoordinates(debouncedAddress1 , setCoordinates1);
     }
 }, [debouncedAddress , debouncedAddress1]);
+
 
 
   async function getUsers() {
@@ -134,6 +161,7 @@ useEffect(()=>{
         ]
     },
     };
+
     try {
       const response = await createApiData(
         `https://muvit-project.vercel.app/api/v1/admin/bookings/assignbyId/${isPopupOpen}`,
@@ -612,18 +640,22 @@ useEffect(()=>{
             <label htmlFor="pickup" className="input-label">
               Add Pickup Location
             </label>
+            <div style={{position:"relative"}}>
+
             <input
               type="text"
               id="pickup"
               className="input-field"
               placeholder="Address"
-              value={pickupAddress}
+              value={pickupAddress || selectedAddress1}
               onChange={(e)=>{
                  setpickupAddress(e.target.value)
                 //  getCoordinates(e.target.value)
                 }}
             />
-
+            <img src="../location.jpg"  onClick={openMapModal} alt="" style={{width:"20px", position:"absolute" , right:"20px", top:"10px" , cursor:"pointer"}} />
+            </div>
+            <div style={{position:"relative"}}>
             <label htmlFor="dropoff" className="input-label">
               Add Dropoff Location
             </label>
@@ -632,9 +664,11 @@ useEffect(()=>{
               id="dropoff"
               className="input-field"
               placeholder="Address"
-              value={dropAddress}
+              value={dropAddress || selectedAddress2}
               onChange={(e)=> setdropAddress(e.target.value)}
             />
+              <img src="../location.jpg"  onClick={openMapModal2} alt="" style={{width:"20px", position:"absolute" , right:"20px", top:"40px" , cursor:"pointer"}} />
+            </div>
             <div
               style={{
                 display: "flex",
@@ -671,6 +705,73 @@ useEffect(()=>{
          </p>
          <p style={{color:"#121212"}}>  {assignRole?.role}</p>
               </div>
+          </div>
+        </div>
+      )}
+
+{showMapModal1 && (
+        <div
+          className="popup-overlay"
+          onClick={closeMapModal}
+        >
+          <div
+           style={{
+            backgroundColor: '#fff',
+            padding: '20px',
+            borderRadius: '8px',
+            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+          }}
+            onClick={(e) => e.stopPropagation()} // Prevent modal close when clicking inside
+          >
+            <LocationPicker onLocationSelect={handleLocationSelect} />
+            <button
+              onClick={closeMapModal}
+              style={{
+                marginTop: '20px',
+                backgroundColor: '#dc3545',
+                color: '#fff',
+                padding: '10px 20px',
+                borderRadius: '4px',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+{showMapModal2 && (
+        <div
+          className="popup-overlay"
+          onClick={closeMapModal2}
+        >
+          <div
+           style={{
+            backgroundColor: '#fff',
+            padding: '20px',
+            borderRadius: '8px',
+            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
+          }}
+            onClick={(e) => e.stopPropagation()} // Prevent modal close when clicking inside
+          >
+            <LocationPicker onLocationSelect={handleLocationSelect2} />
+            <button
+              onClick={closeMapModal2}
+              style={{
+                marginTop: '20px',
+                backgroundColor: '#dc3545',
+                color: '#fff',
+                padding: '10px 20px',
+                borderRadius: '4px',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}

@@ -29,8 +29,8 @@ const BookingPage = () => {
   })
   const [selectedAddress1, setSelectedAddress1] = useState('');
   const [selectedAddress2, setSelectedAddress2] = useState('');
-  const [debouncedAddress, setDebouncedAddress] = useState(pickupAddress || selectedAddress1);
-  const [debouncedAddress1, setDebouncedAddress1] = useState(dropAddress || selectedAddress2);
+  const [debouncedAddress, setDebouncedAddress] = useState( selectedAddress1 || pickupAddress );
+  const [debouncedAddress1, setDebouncedAddress1] = useState( selectedAddress2 || dropAddress );
   const [showMapModal1, setShowMapModal1] = useState(false);
   const [showMapModal2, setShowMapModal2] = useState(false);
   const [selectedCoordinates, setSelectedCoordinates] = useState({
@@ -70,8 +70,8 @@ const BookingPage = () => {
 
   useEffect(() => {
     const timerId = setTimeout(() => {
-        setDebouncedAddress(pickupAddress || selectedAddress1);
-        setDebouncedAddress1(dropAddress || selectedAddress2);
+        setDebouncedAddress( selectedAddress1 || pickupAddress);
+        setDebouncedAddress1( selectedAddress2 || dropAddress );
     }, 1000); // 500ms delay
 
     return () => {
@@ -647,7 +647,7 @@ useEffect(()=>{
               id="pickup"
               className="input-field"
               placeholder="Address"
-              value={pickupAddress || selectedAddress1}
+              value={ selectedAddress1 || pickupAddress}
               onChange={(e)=>{
                  setpickupAddress(e.target.value)
                 //  getCoordinates(e.target.value)
@@ -664,7 +664,7 @@ useEffect(()=>{
               id="dropoff"
               className="input-field"
               placeholder="Address"
-              value={dropAddress || selectedAddress2}
+              value={ selectedAddress2 || dropAddress}
               onChange={(e)=> setdropAddress(e.target.value)}
             />
               <img src="../location.jpg"  onClick={openMapModal2} alt="" style={{width:"20px", position:"absolute" , right:"20px", top:"40px" , cursor:"pointer"}} />

@@ -1,6 +1,7 @@
-import React, { useState, useCallback } from 'react';
-import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import { GoogleMap, useJsApiLoader, Marker, StandaloneSearchBox } from '@react-google-maps/api';
 
+// Inline style for Google Map container
 const containerStyle = {
   width: '100%',
   height: '400px',
@@ -9,6 +10,7 @@ const containerStyle = {
   marginBottom: '20px',
 };
 
+// Default center location
 const defaultCenter = {
   lat: 28.39,
   lng: 77.13,
@@ -17,11 +19,15 @@ const defaultCenter = {
 export const LocationPicker = ({ onLocationSelect }) => {
   const [location, setLocation] = useState(defaultCenter);
   const [address, setAddress] = useState('');
+  const searchBoxRef = useRef(null);
+  const mapRef = useRef(null);
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyAxvv_NnQpCjr0n4J1zSomdYInOmvoKOjc", // Your API key here
+    googleMapsApiKey:  'AIzaSyAxvv_NnQpCjr0n4J1zSomdYInOmvoKOjc', // Your API key here
+    libraries: ['places'], // Load Places library
   });
 
+  // Geocode latitude and longitude to get address
   const geocodeLatLng = (lat, lng) => {
     const geocoder = new window.google.maps.Geocoder();
     const latlng = { lat, lng };
@@ -39,6 +45,7 @@ export const LocationPicker = ({ onLocationSelect }) => {
     });
   };
 
+  // Handle map click
   const onMapClick = useCallback((event) => {
     const lat = event.latLng.lat();
     const lng = event.latLng.lng();
@@ -46,41 +53,79 @@ export const LocationPicker = ({ onLocationSelect }) => {
     geocodeLatLng(lat, lng);
   }, []);
 
+  // Handle place selection from the search box
+  const onPlacesChanged = () => {
+    const places = searchBoxRef.current.getPlaces();
+    if (places && places.length > 0) {
+      const place = places[0];
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+      setLocation({ lat, lng });
+      geocodeLatLng(lat, lng);
+      mapRef.current.panTo({ lat, lng });
+    }
+  };
+
+  // Confirm selected location and address
   const handleConfirmLocation = () => {
-    // Pass both location (lat/lng) and address back to parent
     onLocationSelect({ location, address });
   };
 
   return isLoaded ? (
-    <div>
+    <div style={{ padding: '20px', borderRadius: '8px', backgroundColor: '#fff' }}>
+      {/* Search Box */}
+      <div style={{ marginBottom: '10px' }}>
+        <StandaloneSearchBox
+          onLoad={(ref) => (searchBoxRef.current = ref)}
+          onPlacesChanged={onPlacesChanged}
+        >
+          <input
+            type="text"
+            placeholder="Search for places..."
+            style={{
+              width: '100%',
+              padding: '10px',
+              borderRadius: '4px',
+              border: '1px solid #ccc',
+            }}
+          />
+        </StandaloneSearchBox>
+      </div>
+
+      {/* Google Map */}
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={location}
         zoom={10}
         onClick={onMapClick}
+        onLoad={(map) => (mapRef.current = map)}
       >
         {/* Marker on the selected location */}
         <Marker position={location} />
       </GoogleMap>
 
-      <div className="mt-4">
-        <p><strong>Selected Address:</strong> {address || "Click on the map to select a location"}</p>
-        <button
-          onClick={handleConfirmLocation}
-          style={{
-            backgroundColor: '#007bff',
-            color: '#fff',
-            padding: '10px 20px',
-            borderRadius: '4px',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
-          Confirm Location
-        </button>
-      </div>
+      {/* Selected Address */}
+      <p style={{ marginBottom: '10px', fontWeight: 'bold' }}>
+        Selected Address: {address || "Click on the map or search to select a location"}
+      </p>
+
+      {/* Confirm Button */}
+      <button
+        onClick={handleConfirmLocation}
+        style={{
+          backgroundColor: '#007bff',
+          color: '#fff',
+          padding: '10px 20px',
+          borderRadius: '4px',
+          border: 'none',
+          cursor: 'pointer',
+        }}
+      >
+        Confirm Location
+      </button>
     </div>
   ) : (
     <p>Loading...</p>
   );
 };
+

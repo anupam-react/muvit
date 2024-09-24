@@ -161,6 +161,7 @@ useEffect(()=>{
         ]
     },
     };
+   
 
     try {
       const response = await createApiData(
@@ -646,6 +647,7 @@ useEffect(()=>{
               type="text"
               id="pickup"
               className="input-field"
+              style={{paddingRight:"50px"}}
               placeholder="Address"
               value={ selectedAddress1 || pickupAddress}
               onChange={(e)=>{
@@ -663,6 +665,7 @@ useEffect(()=>{
               type="text"
               id="dropoff"
               className="input-field"
+              style={{paddingRight:"50px"}}
               placeholder="Address"
               value={ selectedAddress2 || dropAddress}
               onChange={(e)=> setdropAddress(e.target.value)}
